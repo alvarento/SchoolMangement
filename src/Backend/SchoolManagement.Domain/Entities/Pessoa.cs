@@ -25,7 +25,7 @@ namespace SchoolManagement.Domain.Entities
 			string sexo,
 			string fone,
 			string email,
-			string dataNascimento)
+			DateTime dataNascimento)
 			{
 				Nome = Nome.Criar(nome);
 				Cpf = Cpf.Criar(cpf);
@@ -44,9 +44,9 @@ namespace SchoolManagement.Domain.Entities
 			Sexo = sexo;
         }
 
-		private void SetDataNascimento(string dataNascimento) => DataNascimento = DataNascimento.Criar(dataNascimento);
+		private void SetDataNascimento(DateTime dataNascimento) => DataNascimento = DataNascimento.Criar(dataNascimento);
 
-		private void SetIdade(string dataNascimento) => Idade = Idade.Criar(dataNascimento);
+		private void SetIdade(DateTime dataNascimento) => Idade = Idade.Criar(dataNascimento);
 
 
 

@@ -10,25 +10,84 @@
 @inject IAlunoService service
 @inject DialogService DialogService
 
+<RadzenTemplateForm Data="@aluno" Style="width: 100%" TItem="RequestCreateAlunoDto" Submit ="@Save">
+	<ChildContent Context="formContext">
+		<RadzenTextBox @bind-Value="aluno.Nome" Name="Nome" Placeholder="Nome" Style="width:100%" />
+		<RadzenRequiredValidator Component="Nome" Text="Nome é obrigatório" Style="position: absolute" />
+		<RadzenTextBox @bind-Value="aluno.Cpf" Name="Cpf" Placeholder="CPF" Style="width:100%" />
+		<div style="margin-bottom: 1rem">
+			<RadzenLabel Text="Sexo" />
+			<RadzenDropDown @bind-Value="aluno.Sexo"
+							Data="@opcoesSexo"
+							TextProperty="Descricao"
+							ValueProperty="Codigo"
+							Style="width: 100%;"
+							Name="Sexo" />
+		</div>
+		<RadzenTextBox @bind-Value="aluno.Telefone" Name="Telefone" Placeholder="Telefone" Style="width:100%" />
+		<RadzenTextBox @bind-Value="aluno.Email" Name="Email" Placeholder="Email" Style="width:100%" />
+		<div style="margin-bottom: 1rem">
+			<RadzenLabel Text="Data de Nascimento" />
+			<RadzenDatePicker @bind-Value="aluno.DataNascimento"
+							  DateFormat="dd/MM/yyyy"
+							  Style="width: 100%;"
+							  Name="DataNascimento"
+							  ShowTime="false" />
+		</div>
 
-	<RadzenTemplateForm Data="@aluno">
-		<ChildContent Context="formContext">
-			<RadzenTextBox @bind-Value="aluno.Nome" Name="Nome" Placeholder="Nome" Style="width:100%" />
-			<RadzenTextBox @bind-Value="aluno.Cpf" Name="Cpf" Placeholder="CPF" Style="width:100%" />
-			<RadzenTextBox @bind-Value="aluno.Email" Name="Email" Placeholder="Email" Style="width:100%" />
-			<RadzenTextBox @bind-Value="aluno.Telefone" Name="Telefone" Placeholder="Telefone" Style="width:100%" />
-
-			<RadzenButton Text="Salvar" ButtonStyle="ButtonStyle.Primary" Type="Submit" />
-			<RadzenButton Text="Cancelar" Click="@(() => DialogService.Close(false))" ButtonStyle="ButtonStyle.Secondary" />
-		</ChildContent>
-	</RadzenTemplateForm>
+		<RadzenButton Text="Salvar" ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Primary"/>
+		<RadzenButton Text="Cancelar" ButtonType="ButtonType.Button" Click="@(() => DialogService.Close(false))" ButtonStyle="ButtonStyle.Secondary" />
+	</ChildContent>
+</RadzenTemplateForm>
 
 @code {
 	private RequestCreateAlunoDto aluno = new();
 
-	private async Task Salvar()
+	// Lista de opções para o Select de Sexo
+	List<dynamic> opcoesSexo = new List<dynamic>()
 	{
-		// await service.CreateAluno(aluno);
-		DialogService.Close(true);
+		new { Codigo = "M", Descricao = "Masculino" },
+		new { Codigo = "F", Descricao = "Feminino" }
+	};
+
+	private async Task Save(RequestCreateAlunoDto args)
+	{
+		try
+		{
+			// O service.Create agora retorna um bool (conforme configuramos antes)
+			var sucesso = await service.Create(args);
+
+			if (sucesso)
+			{
+				NotificationService.Notify(new NotificationMessage
+				{
+					Severity = NotificationSeverity.Success,
+					Summary = "Sucesso",
+					Detail = "Aluno salvo com sucesso!"
+				});
+
+				DialogService.Close(true);
+
+				StateHasChanged();
+			}
+			else
+			{
+				NotificationService.Notify(new NotificationMessage
+				{
+					Severity = NotificationSeverity.Error,
+					Summary = "Erro",
+					Detail = "Não foi possível salvar os dados."
+				});
+			}
+		}
+		catch (Exception ex)
+		{
+			NotificationService.Notify(new NotificationMessage
+			{
+				Severity = NotificationSeverity.Error,
+				Summary = "Erro Crítico",
+				Detail = ex.Message
+			});
+		}
 	}
 }

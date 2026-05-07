@@ -12,9 +12,8 @@ namespace SchoolManagement.Domain.ValueObjects
 		}
 
 
-		public static Idade Criar(string input)
+		public static Idade Criar(DateTime dataNascimento)
 		{
-			DateTime dataNascimento = DataNascimento.Criar(input).Valor;
 			DateTime hoje = DateTime.Today;
 			int idade = hoje.Year - dataNascimento.Year;
 			if (dataNascimento.Date > hoje.AddYears(-idade)) idade--;

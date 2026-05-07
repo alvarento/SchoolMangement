@@ -1,6 +1,5 @@
 using System.Text.Json.Serialization;
 using Scalar.AspNetCore;
-using SchoolManagement.API.Converters;
 using SchoolManagement.API.Filters;
 using SchoolManagement.API.Middleware;
 using SchoolManagement.Application;
@@ -19,7 +18,6 @@ builder.Services.AddControllers()
 	.AddJsonOptions(options =>
 	{
 		options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-		options.JsonSerializerOptions.Converters.Add(new DateTimeBrazilConverter());
 	});
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();

@@ -26,8 +26,8 @@ namespace SchoolManagement.Communication.RequestsDto
 
 
 		[Required]
-		//[DataType(DataType.Date)]
+		[DataType(DataType.Date)]
 		[DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd/MM/yyyy}")]
-		public string DataNascimento { get; set; } = string.Empty;
+		public DateTime DataNascimento { get; set; }
 	}
 }

@@ -10,15 +10,15 @@ namespace SchoolManagement.Domain.ValueObjects
 		{
 			if (valor > DateTime.UtcNow)
 				throw new DomainException("Data de nascimento não pode ser futura.");
-			Valor = valor;
+
+			Idade idade = Idade.Criar(valor) ?? throw new DomainException("Idade Inválida.");
+
+            Valor = valor;
 		}
 
-		public static DataNascimento Criar(string valor)
-		{
-			if (!DateTime.TryParse(valor, out var date))
-				throw new DomainException("Data inválida. Use um formato válido.");
-
-			return new DataNascimento(date);
+		public static DataNascimento Criar(DateTime valor)
+		{ 
+			return new DataNascimento(valor);
 		}
 	}
 }

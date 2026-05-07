@@ -35,7 +35,7 @@ namespace SchoolManagement.Domain.Entities
 			string sexo, 
 			string fone, 
 			string email, 
-			string dataNascimento, 
+			DateTime dataNascimento, 
 			int cargaHorariaSemanal, 
 			decimal valorHora, 
 		TitulacaoProfessor titulacao

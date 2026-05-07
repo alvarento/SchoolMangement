@@ -24,7 +24,7 @@ namespace SchoolManagement.Domain.Entities
 			string sexo,
 			string fone,
 			string email,
-			string dataNascimento) : base(nome, cpf, sexo, fone, email, dataNascimento)
+			DateTime dataNascimento) : base(nome, cpf, sexo, fone, email, dataNascimento)
 		{
 			StatusAluno = StatusAluno.PreCadastrado;
 			SituacaoAluno = SituacaoAluno.NA;

@@ -33,7 +33,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var response = await service.GetAlunos();
+        var response = await service.GetAll();
         alunos = response.Data;
 
     }
