@@ -1,0 +1,76 @@
+﻿@using SchoolManagement.Communication.ResponsesDto
+@using SchoolManagement.Domain.Entities;
+@using SchoolManagement.WebApp.Services
+@using SchoolManagement.WebApp.Services.AlunoService
+@inject NotificationService NotificationService
+
+@inject IJSRuntime JS
+
+@inject IAlunoService service;
+
+<RadzenDataGrid AllowFiltering="false" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="6" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+                Data="@alunos" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or" SelectionMode="DataGridSelectionMode.Single" Context="aluno">
+    <Columns>
+        <RadzenDataGridColumn Property="@nameof(ResponseReadAlunoDto.Id)" Filterable="false" Title="ID" Frozen="true" Width="80px" TextAlign="TextAlign.Center" />
+        <RadzenDataGridColumn Property="@nameof(ResponseReadAlunoDto.Nome)" Title="Nome" Frozen="true" Width="160px" />
+        <RadzenDataGridColumn Property="@nameof(ResponseReadAlunoDto.Cpf)" Title="Cpf" Width="160px" />
+        <RadzenDataGridColumn Property="@nameof(ResponseReadAlunoDto.Email)" Title="Email" Width="200px" />
+        <RadzenDataGridColumn Property="@nameof(ResponseReadAlunoDto.Telefone)" Title="Telefone" Width="120px" />
+        <RadzenDataGridColumn Property="@nameof(ResponseReadAlunoDto.Sexo)" Title="Sexo" Width="70px" />
+        <RadzenDataGridColumn Property="@nameof(ResponseReadAlunoDto.StatusAluno)" Title="Status Aluno" FormatString="{0:d}" Width="160px" />
+        <RadzenDataGridColumn Title="Ações" FormatString="{0:d}" Width="100px">
+            <Template Context="aluno">
+                <RadzenButton Click=@(() => Edit(aluno.Id)) Icon="edit" ButtonStyle="ButtonStyle.Primary" />
+                <RadzenButton Click=@(() => Delete(aluno.Id)) Icon="delete" ButtonStyle="ButtonStyle.Danger" />
+            </Template>
+        </RadzenDataGridColumn>
+    </Columns>
+</RadzenDataGrid>
+
+
+@code {
+    IList<ResponseReadAlunoDto> alunos = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await service.GetAlunos();
+        alunos = response.Data;
+
+    }
+
+
+
+
+
+    private async Task Edit(int alunoId)
+    {
+        Console.WriteLine($"Editando: {alunoId}");
+        await JS.InvokeVoidAsync("console.log", $"Editar aluno com ID: {alunoId}");
+    }
+
+
+    public async Task Delete(int alunoId)
+    {
+        Console.WriteLine($"{alunoId}");
+        await JS.InvokeVoidAsync("console.log", $"ID: {alunoId}");
+
+
+        var success = await service.Delete(alunoId);
+
+        if (success)
+        {
+       
+            var alunoRemovido = alunos.FirstOrDefault(a => a.Id == alunoId);
+            if (alunoRemovido != null)
+            {
+                alunos.Remove(alunoRemovido);
+            }
+
+            StateHasChanged();
+        }
+        else
+        {
+            await JS.InvokeVoidAsync("console.log", $"Erro ao deletar aluno com ID: {alunoId}");
+        }
+    }
+}

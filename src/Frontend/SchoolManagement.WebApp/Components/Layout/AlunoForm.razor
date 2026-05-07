@@ -1,0 +1,34 @@
+﻿@using SchoolManagement.Communication.ResponsesDto
+@using SchoolManagement.Communication.RequestsDto
+@using SchoolManagement.Domain.Entities
+@using SchoolManagement.WebApp.Services
+@using SchoolManagement.WebApp.Services.AlunoService
+@inject NotificationService NotificationService
+
+@inject IJSRuntime JS
+
+@inject IAlunoService service
+@inject DialogService DialogService
+
+
+	<RadzenTemplateForm Data="@aluno">
+		<ChildContent Context="formContext">
+			<RadzenTextBox @bind-Value="aluno.Nome" Name="Nome" Placeholder="Nome" Style="width:100%" />
+			<RadzenTextBox @bind-Value="aluno.Cpf" Name="Cpf" Placeholder="CPF" Style="width:100%" />
+			<RadzenTextBox @bind-Value="aluno.Email" Name="Email" Placeholder="Email" Style="width:100%" />
+			<RadzenTextBox @bind-Value="aluno.Telefone" Name="Telefone" Placeholder="Telefone" Style="width:100%" />
+
+			<RadzenButton Text="Salvar" ButtonStyle="ButtonStyle.Primary" Type="Submit" />
+			<RadzenButton Text="Cancelar" Click="@(() => DialogService.Close(false))" ButtonStyle="ButtonStyle.Secondary" />
+		</ChildContent>
+	</RadzenTemplateForm>
+
+@code {
+	private RequestCreateAlunoDto aluno = new();
+
+	private async Task Salvar()
+	{
+		// await service.CreateAluno(aluno);
+		DialogService.Close(true);
+	}
+}
