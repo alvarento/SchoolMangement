@@ -22,5 +22,11 @@ namespace SchoolManagement.WebApp.Services.AlunoService
             return response.IsSuccessStatusCode;
         }
 
+		public async Task<bool> Update(int id, RequestUpdateAlunoDto aluno)
+		{
+			var response = await _http.PutAsJsonAsync($"/alunos/{id}", aluno);
+			return response.IsSuccessStatusCode;
+		}
+
 	}
 }

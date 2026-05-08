@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Backend\SchoolManagement.Domain\SchoolManagement.Domain.csproj" />
+    <ProjectReference Include="..\SchoolManagement.Validation\SchoolManagement.Validations.csproj" />
   </ItemGroup>
 
 </Project>

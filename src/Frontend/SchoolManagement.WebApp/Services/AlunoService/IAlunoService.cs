@@ -11,6 +11,9 @@ namespace SchoolManagement.WebApp.Services.AlunoService
 
         public Task<bool> Create(RequestCreateAlunoDto aluno);
 
+        public Task<bool> Update(int id, RequestUpdateAlunoDto aluno);
 
-    }
+
+
+	}
 }

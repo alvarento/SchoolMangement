@@ -12,6 +12,7 @@
   <Folder Name="/src/Shared/">
     <Project Path="src/Shared/SchoolManagement.Communication/SchoolManagement.Communication.csproj" Id="cda90e9c-c0b9-4b19-aaa2-7458120ab880" />
     <Project Path="src/Shared/SchoolManagement.Exceptions/SchoolManagement.Exceptions.csproj" Id="729cc1fb-81ad-4d57-8506-0faf5cacef86" />
+    <Project Path="src/Shared/SchoolManagement.Validation/SchoolManagement.Validations.csproj" Id="36e64710-f3d3-45ff-8cd3-b4762ae46296" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/CommonTestUtilities/CommonTestUtilities.csproj" Id="0dd3aee1-3d6a-480c-a732-44c1c5043e1f" />

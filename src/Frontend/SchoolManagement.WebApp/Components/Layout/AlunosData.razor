@@ -2,14 +2,20 @@
 @using SchoolManagement.Domain.Entities;
 @using SchoolManagement.WebApp.Services
 @using SchoolManagement.WebApp.Services.AlunoService
+@using System.Collections.ObjectModel
 @inject NotificationService NotificationService
+@inject DialogService DialogService
 
 @inject IJSRuntime JS
 
 @inject IAlunoService service;
 
+
+<div class="container-add">
+    <RadzenButton Click="@NovoAluno" class="add-btn" text="Novo Aluno" Icon="add_circle" ButtonStyle="ButtonStyle.Primary" />
+</div>
 <RadzenDataGrid AllowFiltering="false" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="6" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
-                Data="@alunos" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or" SelectionMode="DataGridSelectionMode.Single" Context="aluno">
+                Data="@alunos" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or" SelectionMode="DataGridSelectionMode.Single" Context="aluno" SortProperty="@nameof(ResponseReadAlunoDto.Id)" SortOrder="SortOrder.Ascending">
     <Columns>
         <RadzenDataGridColumn Property="@nameof(ResponseReadAlunoDto.Id)" Filterable="false" Title="ID" Frozen="true" Width="80px" TextAlign="TextAlign.Center" />
         <RadzenDataGridColumn Property="@nameof(ResponseReadAlunoDto.Nome)" Title="Nome" Frozen="true" Width="160px" />
@@ -29,12 +35,41 @@
 
 
 @code {
-    IList<ResponseReadAlunoDto> alunos = [];
+    ObservableCollection<ResponseReadAlunoDto> alunos = [];
+
+
+    private async Task GetAlunosLit()
+    {
+        var response = await service.GetAll();
+        alunos = new ObservableCollection<ResponseReadAlunoDto>(
+        response.Data.OrderBy(a => a.Id));
+    }
 
     protected override async Task OnInitializedAsync()
     {
-        var response = await service.GetAll();
-        alunos = response.Data;
+        await GetAlunosLit();
+    }
+
+    public async Task NovoAluno()
+    {
+        Console.WriteLine("Botão do Novo Aluno");
+        var resultado = await DialogService.OpenAsync<AlunoForm>(
+            "Adicionar Novo Aluno",
+            new Dictionary<string, object?>() { },
+            new DialogOptions()
+            {
+                Resizable = true,
+                Draggable = true,
+                Width = "800px",
+                Height = "auto"
+            }
+        );
+
+        if (resultado != null && (bool)resultado)
+        {
+            await GetAlunosLit();
+            StateHasChanged();
+        }
 
     }
 
@@ -44,33 +79,51 @@
 
     private async Task Edit(int alunoId)
     {
-        Console.WriteLine($"Editando: {alunoId}");
-        await JS.InvokeVoidAsync("console.log", $"Editar aluno com ID: {alunoId}");
+        var alunoSelecionado = alunos.FirstOrDefault(a => a.Id == alunoId);
+
+        if (alunoSelecionado != null)
+        {
+            var resultado = await DialogService.OpenAsync<AlunoEditForm>(
+                "Editar Aluno",
+                new Dictionary<string, object?>() { { "AlunoExistente", alunoSelecionado } },
+                new DialogOptions() { Width = "600px", Height = "400px" }
+            );
+
+            if (resultado is ResponseReadAlunoDto alunoAtualizado)
+            {
+                // Recarrega lista após edição
+                var index = alunos.IndexOf(alunoSelecionado);
+                alunos[index] = alunoAtualizado; // substitui e atualiza grid
+            }
+        }
     }
+
+
+
 
 
     public async Task Delete(int alunoId)
     {
-        Console.WriteLine($"{alunoId}");
-        await JS.InvokeVoidAsync("console.log", $"ID: {alunoId}");
-
-
         var success = await service.Delete(alunoId);
 
         if (success)
         {
-       
             var alunoRemovido = alunos.FirstOrDefault(a => a.Id == alunoId);
             if (alunoRemovido != null)
             {
                 alunos.Remove(alunoRemovido);
             }
 
-            StateHasChanged();
+            // StateHasChanged();
         }
         else
         {
-            await JS.InvokeVoidAsync("console.log", $"Erro ao deletar aluno com ID: {alunoId}");
+            NotificationService.Notify(new NotificationMessage
+            {
+                Severity = NotificationSeverity.Error,
+                Summary = "Erro",
+                Detail = $"Não foi possível excluir o aluno com ID {alunoId}."
+            });
         }
     }
 }

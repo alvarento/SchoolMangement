@@ -1,27 +1,10 @@
 ﻿@page "/alunos";
 
-@inject DialogService DialogService
-
 <h3>Alunos</h3>
 
-<div class="container-add">
-    <RadzenButton Click="@NovoAluno" class="add-btn" text="Novo Aluno" Icon="add_circle" ButtonStyle="ButtonStyle.Primary" />
-</div>
+
 <AlunosData />
 
 @code {
-    public async Task NovoAluno()
-    {
-        Console.WriteLine("Botão do Novo Aluno");
-        await DialogService.OpenAsync<AlunoForm>(
-            "Adicionar Novo Aluno",
-            new Dictionary<string, object?>() { },
-            new DialogOptions() { 
-                Resizable = true,
-                Draggable = true,
-                Width = "800px", 
-                Height = "600px" }
-        );
-
-    }
+   
 }

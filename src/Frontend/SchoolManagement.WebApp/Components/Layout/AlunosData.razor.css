@@ -1,0 +1,10 @@
+﻿.container-add {
+	/*    background-color: red;*/
+	padding: 15px;
+	display: flex;
+	justify-content: flex-end;
+}
+
+.add-btn {
+	margin-left: auto;
+}

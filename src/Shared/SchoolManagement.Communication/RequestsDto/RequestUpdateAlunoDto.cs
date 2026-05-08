@@ -1,9 +1,7 @@
 namespace SchoolManagement.Communication.RequestsDto
 {
-	public class RequestUpdateAlunoDto
+	public class RequestUpdateAlunoDto : RequestUpdatePessoaDto
 	{
-		public string? Nome { get; set; }
-		public string? Telefone { get; set; }
-		public string? Email { get; set; }
+		
 	}
 }
