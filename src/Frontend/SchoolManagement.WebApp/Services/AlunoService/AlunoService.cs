@@ -8,7 +8,18 @@ namespace SchoolManagement.WebApp.Services.AlunoService
        
             private readonly HttpClient _http;
             public AlunoService(HttpClient http) => _http = http;
-            public async Task<PagedResponse<ResponseReadAlunoDto>> GetAll() => await _http.GetFromJsonAsync<PagedResponse<ResponseReadAlunoDto>>("/alunos");
+            public async Task<PagedResponse<ResponseReadAlunoDto>> GetAll()
+            {
+            var response = await _http.GetAsync("api/alunos");
+
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<PagedResponse<ResponseReadAlunoDto>>();
+            }
+
+            // Se for 401 (Unauthorized) ou 403 (Forbidden), o token expirou ou é inválido
+            return null;
+        }
 
 		public async Task<bool> Delete(int id)
 		{

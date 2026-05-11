@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Blazor.LocalStorage.WebAssembly" Version="9.0.1" />
     <PackageReference Include="Radzen.Blazor" Version="10.3.2" />
   </ItemGroup>
 

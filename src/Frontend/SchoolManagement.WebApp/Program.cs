@@ -1,11 +1,15 @@
 using Radzen;
 using SchoolManagement.Communication.Utils.Logs;
 using SchoolManagement.WebApp.Components;
+using SchoolManagement.WebApp.Handler.AuthHandler;
 using SchoolManagement.WebApp.Services.AlunoService;
+using SchoolManagement.WebApp.Services.LocalStorageService;
 
 Console.OutputEncoding = System.Text.Encoding.UTF8;
 
 var builder = WebApplication.CreateBuilder(args);
+
+Uri baseUrl = new Uri(builder.Configuration["ApiConfig:BaseUrl"] ?? "https://localhost:5001");
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
@@ -13,11 +17,12 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddRadzenComponents();
 
-builder.Services.AddScoped(sp =>
-    new HttpClient { BaseAddress = new Uri("https://localhost:5001") });
+builder.Services.AddHttpClient<IAlunoService, AlunoService>(client => client.BaseAddress = baseUrl)
+    .AddHttpMessageHandler<AuthHandler>();
 
-
+builder.Services.AddTransient<AuthHandler>();
 builder.Services.AddScoped<IAlunoService, AlunoService>();
+builder.Services.AddScoped<ILocalStorageService, LocalStorageService>();
 
 
 PrintLauchConsole(builder.Configuration);
