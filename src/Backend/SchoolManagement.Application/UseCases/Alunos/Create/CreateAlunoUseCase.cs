@@ -5,6 +5,7 @@ using SchoolManagement.Communication.ResponsesDto;
 using SchoolManagement.Domain.Interfaces;
 using SchoolManagement.Domain.Entities;
 using SchoolManagement.Exceptions;
+using SchoolManagement.Domain.Interfaces.Repositories;
 
 namespace SchoolManagement.Application.UseCases.Alunos.Create
 {
@@ -51,8 +52,6 @@ namespace SchoolManagement.Application.UseCases.Alunos.Create
 			var result = validator.Validate(request);
 			if (!result.IsValid) _validationErrorMessages.ThrowInvalid(result);
 
-			//bool emailExists = await _alunoRepository.ExistActiveAlunoWithEmail(request.Email);
-			//bool cpfExists = await _alunoRepository.ExistActiveAlunoWithCpf(request.Cpf);
 			bool emailExists = await _pessoaRepository.ExistsEmail(request.Email);
 			bool cpfExists = await _pessoaRepository.ExistsCpf(request.Cpf);
 			if (emailExists) _validationErrorMessages.AddError(result, ResourceMessagesException.EMAIL_ALREADY_REGISTERED);

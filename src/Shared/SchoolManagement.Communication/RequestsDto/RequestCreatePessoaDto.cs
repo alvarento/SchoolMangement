@@ -32,6 +32,6 @@ namespace SchoolManagement.Communication.RequestsDto
 		[DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd/MM/yyyy}")]
 		[IdadeRange(5, 120)]
 		[Required(ErrorMessage = "Data de nascimento é obrigatória")]
-		public DateTime DataNascimento { get; set; }
+		public DateTime? DataNascimento { get; set; }
 	}
 }

@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SchoolManagement.Domain.Entities;
-using SchoolManagement.Domain.Interfaces;
+using SchoolManagement.Domain.Interfaces.Repositories;
 using SchoolManagement.Infrastructure.DataAcess;
 
 

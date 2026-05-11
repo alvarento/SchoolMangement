@@ -14,35 +14,48 @@
 <div class="container-add">
     <RadzenButton Click="@NovoAluno" class="add-btn" text="Novo Aluno" Icon="add_circle" ButtonStyle="ButtonStyle.Primary" />
 </div>
-<RadzenDataGrid AllowFiltering="false" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="6" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
-                Data="@alunos" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or" SelectionMode="DataGridSelectionMode.Single" Context="aluno" SortProperty="@nameof(ResponseReadAlunoDto.Id)" SortOrder="SortOrder.Ascending">
-    <Columns>
-        <RadzenDataGridColumn Property="@nameof(ResponseReadAlunoDto.Id)" Filterable="false" Title="ID" Frozen="true" Width="80px" TextAlign="TextAlign.Center" />
-        <RadzenDataGridColumn Property="@nameof(ResponseReadAlunoDto.Nome)" Title="Nome" Frozen="true" Width="160px" />
-        <RadzenDataGridColumn Property="@nameof(ResponseReadAlunoDto.Cpf)" Title="Cpf" Width="160px" />
-        <RadzenDataGridColumn Property="@nameof(ResponseReadAlunoDto.Email)" Title="Email" Width="200px" />
-        <RadzenDataGridColumn Property="@nameof(ResponseReadAlunoDto.Telefone)" Title="Telefone" Width="120px" />
-        <RadzenDataGridColumn Property="@nameof(ResponseReadAlunoDto.Sexo)" Title="Sexo" Width="70px" />
-        <RadzenDataGridColumn Property="@nameof(ResponseReadAlunoDto.StatusAluno)" Title="Status Aluno" FormatString="{0:d}" Width="160px" />
-        <RadzenDataGridColumn Title="Ações" FormatString="{0:d}" Width="100px">
-            <Template Context="aluno">
-                <RadzenButton Click=@(() => Edit(aluno.Id)) Icon="edit" ButtonStyle="ButtonStyle.Primary" />
-                <RadzenButton Click=@(() => Delete(aluno.Id)) Icon="delete" ButtonStyle="ButtonStyle.Danger" />
-            </Template>
-        </RadzenDataGridColumn>
-    </Columns>
-</RadzenDataGrid>
+
+@if (isLoading)
+{
+    <div class="loading-container">
+        <RadzenProgressBar Mode="ProgressBarMode.Indeterminate" Style="width:200px" />
+        <span>Carregando alunos...</span>
+    </div>
+}
+else {
+    <RadzenDataGrid AllowFiltering="false" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="6" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+    Data="@alunos" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or" SelectionMode="DataGridSelectionMode.Single" Context="aluno" SortProperty="@nameof(ResponseReadAlunoDto.Id)" SortOrder="SortOrder.Ascending">
+        <Columns>
+            <RadzenDataGridColumn Property="@nameof(ResponseReadAlunoDto.Id)" Filterable="false" Title="ID" Frozen="true" Width="80px" TextAlign="TextAlign.Center" />
+            <RadzenDataGridColumn Property="@nameof(ResponseReadAlunoDto.Nome)" Title="Nome" Frozen="true" Width="160px" />
+            <RadzenDataGridColumn Property="@nameof(ResponseReadAlunoDto.Cpf)" Title="Cpf" Width="160px" />
+            <RadzenDataGridColumn Property="@nameof(ResponseReadAlunoDto.Email)" Title="Email" Width="200px" />
+            <RadzenDataGridColumn Property="@nameof(ResponseReadAlunoDto.Telefone)" Title="Telefone" Width="120px" />
+            <RadzenDataGridColumn Property="@nameof(ResponseReadAlunoDto.Sexo)" Title="Sexo" Width="70px" />
+            <RadzenDataGridColumn Property="@nameof(ResponseReadAlunoDto.StatusAluno)" Title="Status Aluno" FormatString="{0:d}" Width="160px" />
+            <RadzenDataGridColumn Title="Ações" FormatString="{0:d}" Width="100px">
+                <Template Context="aluno">
+                    <RadzenButton Click=@(() => Edit(aluno.Id)) Icon="edit" ButtonStyle="ButtonStyle.Primary" />
+                    <RadzenButton Click=@(() => Delete(aluno.Id)) Icon="delete" ButtonStyle="ButtonStyle.Danger" />
+                </Template>
+            </RadzenDataGridColumn>
+        </Columns>
+    </RadzenDataGrid>
+}
 
 
 @code {
     ObservableCollection<ResponseReadAlunoDto> alunos = [];
+    bool isLoading = true;
 
 
     private async Task GetAlunosLit()
     {
+        isLoading = true;
         var response = await service.GetAll();
         alunos = new ObservableCollection<ResponseReadAlunoDto>(
         response.Data.OrderBy(a => a.Id));
+        isLoading = false;
     }
 
     protected override async Task OnInitializedAsync()
@@ -62,6 +75,7 @@
                 Draggable = true,
                 Width = "800px",
                 Height = "auto"
+           
             }
         );
 
@@ -86,7 +100,7 @@
             var resultado = await DialogService.OpenAsync<AlunoEditForm>(
                 "Editar Aluno",
                 new Dictionary<string, object?>() { { "AlunoExistente", alunoSelecionado } },
-                new DialogOptions() { Width = "600px", Height = "400px" }
+                new DialogOptions() { Width = "600px", Height = "auto" }
             );
 
             if (resultado is ResponseReadAlunoDto alunoAtualizado)

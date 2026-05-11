@@ -1,4 +1,5 @@
 using SchoolManagement.Domain.Interfaces;
+using SchoolManagement.Domain.Interfaces.Repositories;
 using SchoolManagement.Exceptions;
 using SchoolManagement.Exceptions.ExceptionsBase;
 

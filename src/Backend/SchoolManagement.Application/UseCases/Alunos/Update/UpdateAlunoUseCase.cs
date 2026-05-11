@@ -4,6 +4,7 @@ using SchoolManagement.Domain.Interfaces;
 using SchoolManagement.Domain.Entities;
 using SchoolManagement.Exceptions;
 using SchoolManagement.Exceptions.ExceptionsBase;
+using SchoolManagement.Domain.Interfaces.Repositories;
 
 namespace SchoolManagement.Application.UseCases.Alunos.Update
 {

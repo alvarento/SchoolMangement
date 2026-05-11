@@ -24,11 +24,11 @@
 		</div>
 
 		<div class="mb-4">
-			<RadzenLabel Text="Sexo" />
 			<RadzenDropDown @bind-Value="aluno.Sexo"
 							Data="@opcoesSexo"
 							TextProperty="Descricao"
 							ValueProperty="Codigo"
+							Placeholder="Sexo"
 							Style="width: 100%;"
 							Name="Sexo" />
 			<ValidationMessage For="@(() => aluno.Sexo)" />
@@ -45,11 +45,11 @@
 		</div>
 
 		<div class="mb-4">
-			<RadzenLabel Text="Data de Nascimento" />
 			<RadzenDatePicker @bind-Value="aluno.DataNascimento"
+							  Name="DataNascimento"
 							  DateFormat="dd/MM/yyyy"
 							  Style="width: 100%;"
-							  Name="DataNascimento"
+							  Placeholder="Data de Nascimento"
 							  ShowTime="false" />
 			<ValidationMessage For="@(() => aluno.DataNascimento)" />
 		</div>

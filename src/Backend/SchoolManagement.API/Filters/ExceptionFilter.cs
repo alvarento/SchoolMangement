@@ -1,5 +1,4 @@
-﻿using System.Net;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using SchoolManagement.Communication.ResponsesDto;
 using SchoolManagement.Exceptions;
@@ -16,22 +15,15 @@ namespace SchoolManagement.API.Filters
 
 			else
 				ThrowUnknowException(context);
+
+			context.ExceptionHandled = true;
 			
 		}
 
 		private static void HandleProjectException(SchoolManagementException schoolManagementException, ExceptionContext context)
-		{
-			
-			//if (context.Exception is DomainException)
-			//{
-			//	context.HttpContext.Response.StatusCode = (int)schoolManagementException.GetStatusCode();
-			//	context.Result = new ObjectResult(new ResponseErrorDto(schoolManagementException.GetErrorMessages()));
-			//}
-			
+		{		
 			context.HttpContext.Response.StatusCode = (int)schoolManagementException.GetStatusCode();
 			context.Result = new ObjectResult(new ResponseErrorDto(schoolManagementException.GetErrorMessages()));
-			
-
 		}
 
 		private static void ThrowUnknowException(ExceptionContext context)

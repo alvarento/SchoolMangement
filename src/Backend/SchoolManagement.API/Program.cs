@@ -1,10 +1,12 @@
 using System.Text.Json.Serialization;
+using Microsoft.OpenApi;
 using Scalar.AspNetCore;
 using SchoolManagement.API.Filters;
 using SchoolManagement.API.Middleware;
 using SchoolManagement.Application;
 using SchoolManagement.Communication.Utils.Logs;
 using SchoolManagement.Infrastructure;
+using SchoolManagement.Infrastructure.Migrations.ExecuteMigrations;
 
 
 Console.OutputEncoding = System.Text.Encoding.UTF8;
@@ -22,8 +24,32 @@ builder.Services.AddControllers()
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
-builder.Services.AddSwaggerGen(c => {
-	c.UseInlineDefinitionsForEnums();
+builder.Services.AddSwaggerGen(options => {
+	options.UseInlineDefinitionsForEnums();
+	options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+	{
+		Description = @"JWT Authorization header using the Bearer scheme.
+						Enter 'Bearer' [space] and then your token in the text input below.
+						Example: 'Bearer 1234abcdef",
+		Name = "Authorization",
+		In = ParameterLocation.Header,
+		Type = SecuritySchemeType.ApiKey,
+		Scheme = "Bearer",
+		BearerFormat = "JWT"
+	});
+
+
+
+	options.AddSecurityRequirement(document =>
+		new OpenApiSecurityRequirement
+		{
+			[
+				new OpenApiSecuritySchemeReference("Bearer", document)
+			] = []
+		});
+
+
+
 });
 
 builder.Services.AddMvc(options => options.Filters.Add(typeof(ExceptionFilter)));
@@ -31,6 +57,9 @@ builder.Services.AddMvc(options => options.Filters.Add(typeof(ExceptionFilter)))
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.AddFilter("Microsoft.Hosting.Lifetime", LogLevel.None);
 
 
 
@@ -59,15 +88,26 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+await ExecuteMigrations();
+
 
 app.Run();
 
 
+async Task ExecuteMigrations()
+{
+	Console.WriteLine("Rodando Migrations..");
+	await using var scope = app.Services.CreateAsyncScope();
+	await DatabaseMigration.ExecuteMigrations(scope.ServiceProvider);
+	Console.WriteLine("Migrations Concluídas!");
+}
+
+
 void PrintLauchConsole(IConfiguration configuration)
 {
-	builder.Logging.ClearProviders();
-	builder.Logging.AddConsole();
-	builder.Logging.AddFilter("Microsoft.Hosting.Lifetime", LogLevel.None);
+	//builder.Logging.ClearProviders();
+	//builder.Logging.AddConsole();
+	//builder.Logging.AddFilter("Microsoft.Hosting.Lifetime", LogLevel.None);
 
 	var port = configuration.GetSection("ConfigLocalHost:Port").Value ?? "5001";
 

@@ -201,4 +201,28 @@
   <data name="TEACHER_NOT_FOUND" xml:space="preserve">
     <value>Professor não encontrado.</value>
   </data>
+  <data name="ISADMIN_EMPTY" xml:space="preserve">
+    <value>O campo IsAdmin não pode ser vazio</value>
+  </data>
+  <data name="ISADMIN_INVALID" xml:space="preserve">
+    <value>The IsAdmin Field must be boolean.</value>
+  </data>
+  <data name="PASSWORD_EMPTY" xml:space="preserve">
+    <value>A senha não pode ser vazia.</value>
+  </data>
+  <data name="EMAIL_OR_PASSWORD_INVALID" xml:space="preserve">
+    <value>Email ou senha inválidos</value>
+  </data>
+  <data name="NO_TOKEN" xml:space="preserve">
+    <value>A solicitação não tem token</value>
+  </data>
+  <data name="USER_WITHOUT_PERMISSION_ACCESS_RESOURCE" xml:space="preserve">
+    <value>Usuário sem permissão para acessar o recurso.</value>
+  </data>
+  <data name="TOKEN_IS_EXPIRED" xml:space="preserve">
+    <value>Token expirado</value>
+  </data>
+  <data name="EMAIL_OR_PASSWORD_INCORRECT" xml:space="preserve">
+    <value>E-mail ou senha incorretos</value>
+  </data>
 </root>

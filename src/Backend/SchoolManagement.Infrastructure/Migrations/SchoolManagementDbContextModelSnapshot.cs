@@ -2,7 +2,6 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SchoolManagement.Infrastructure.DataAcess;
 
@@ -17,10 +16,8 @@ namespace SchoolManagement.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.15")
+                .HasAnnotation("ProductVersion", "10.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
-
-            MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
             modelBuilder.Entity("ProfessorDisciplinas", b =>
                 {
@@ -58,8 +55,6 @@ namespace SchoolManagement.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
                     b.Property<int>("AlunoId")
                         .HasColumnType("int");
 
@@ -82,8 +77,6 @@ namespace SchoolManagement.Infrastructure.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("CargaHoraria")
                         .HasColumnType("int");
@@ -110,8 +103,6 @@ namespace SchoolManagement.Infrastructure.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("AlunoId")
                         .HasColumnType("int");
@@ -153,8 +144,6 @@ namespace SchoolManagement.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
                     b.Property<int>("BoletimId")
                         .HasColumnType("int");
 
@@ -191,8 +180,6 @@ namespace SchoolManagement.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
                     b.Property<string>("Role")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -215,8 +202,6 @@ namespace SchoolManagement.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
                     b.Property<int>("AnoTurma")
                         .HasColumnType("int");
 
@@ -235,6 +220,25 @@ namespace SchoolManagement.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Turmas", (string)null);
+                });
+
+            modelBuilder.Entity("SchoolManagement.Domain.Entities.Usuario", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<bool>("IsAdmin")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("Senha")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("Senha");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Usuarios", (string)null);
                 });
 
             modelBuilder.Entity("SchoolManagement.Domain.Entities.Aluno", b =>
@@ -377,45 +381,6 @@ namespace SchoolManagement.Infrastructure.Migrations
 
             modelBuilder.Entity("SchoolManagement.Domain.Entities.Pessoa", b =>
                 {
-                    b.OwnsOne("SchoolManagement.Domain.ValueObjects.Cpf", "Cpf", b1 =>
-                        {
-                            b1.Property<int>("PessoaId")
-                                .HasColumnType("int");
-
-                            b1.Property<string>("Valor")
-                                .IsRequired()
-                                .HasMaxLength(11)
-                                .HasColumnType("varchar(11)")
-                                .HasColumnName("Cpf");
-
-                            b1.HasKey("PessoaId");
-
-                            b1.HasIndex("Valor")
-                                .IsUnique();
-
-                            b1.ToTable("Pessoas");
-
-                            b1.WithOwner()
-                                .HasForeignKey("PessoaId");
-                        });
-
-                    b.OwnsOne("SchoolManagement.Domain.ValueObjects.DataNascimento", "DataNascimento", b1 =>
-                        {
-                            b1.Property<int>("PessoaId")
-                                .HasColumnType("int");
-
-                            b1.Property<DateTime>("Valor")
-                                .HasColumnType("date")
-                                .HasColumnName("DataNascimento");
-
-                            b1.HasKey("PessoaId");
-
-                            b1.ToTable("Pessoas");
-
-                            b1.WithOwner()
-                                .HasForeignKey("PessoaId");
-                        });
-
                     b.OwnsOne("SchoolManagement.Domain.ValueObjects.Email", "Email", b1 =>
                         {
                             b1.Property<int>("PessoaId")
@@ -457,6 +422,45 @@ namespace SchoolManagement.Infrastructure.Migrations
                                 .HasForeignKey("PessoaId");
                         });
 
+                    b.OwnsOne("SchoolManagement.Domain.ValueObjects.Cpf", "Cpf", b1 =>
+                        {
+                            b1.Property<int>("PessoaId")
+                                .HasColumnType("int");
+
+                            b1.Property<string>("Valor")
+                                .IsRequired()
+                                .HasMaxLength(11)
+                                .HasColumnType("varchar(11)")
+                                .HasColumnName("Cpf");
+
+                            b1.HasKey("PessoaId");
+
+                            b1.HasIndex("Valor")
+                                .IsUnique();
+
+                            b1.ToTable("Pessoas");
+
+                            b1.WithOwner()
+                                .HasForeignKey("PessoaId");
+                        });
+
+                    b.OwnsOne("SchoolManagement.Domain.ValueObjects.DataNascimento", "DataNascimento", b1 =>
+                        {
+                            b1.Property<int>("PessoaId")
+                                .HasColumnType("int");
+
+                            b1.Property<DateTime>("Valor")
+                                .HasColumnType("date")
+                                .HasColumnName("DataNascimento");
+
+                            b1.HasKey("PessoaId");
+
+                            b1.ToTable("Pessoas");
+
+                            b1.WithOwner()
+                                .HasForeignKey("PessoaId");
+                        });
+
                     b.OwnsOne("SchoolManagement.Domain.ValueObjects.Telefone", "Telefone", b1 =>
                         {
                             b1.Property<int>("PessoaId")
@@ -489,6 +493,56 @@ namespace SchoolManagement.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Telefone")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("SchoolManagement.Domain.Entities.Usuario", b =>
+                {
+                    b.OwnsOne("SchoolManagement.Domain.ValueObjects.Email", "Email", b1 =>
+                        {
+                            b1.Property<Guid>("UsuarioId")
+                                .HasColumnType("char(36)");
+
+                            b1.Property<string>("Valor")
+                                .IsRequired()
+                                .HasMaxLength(100)
+                                .HasColumnType("varchar(100)")
+                                .HasColumnName("Email");
+
+                            b1.HasKey("UsuarioId");
+
+                            b1.HasIndex("Valor")
+                                .IsUnique();
+
+                            b1.ToTable("Usuarios");
+
+                            b1.WithOwner()
+                                .HasForeignKey("UsuarioId");
+                        });
+
+                    b.OwnsOne("SchoolManagement.Domain.ValueObjects.Nome", "Nome", b1 =>
+                        {
+                            b1.Property<Guid>("UsuarioId")
+                                .HasColumnType("char(36)");
+
+                            b1.Property<string>("Valor")
+                                .IsRequired()
+                                .HasMaxLength(255)
+                                .HasColumnType("varchar(255)")
+                                .HasColumnName("Nome");
+
+                            b1.HasKey("UsuarioId");
+
+                            b1.ToTable("Usuarios");
+
+                            b1.WithOwner()
+                                .HasForeignKey("UsuarioId");
+                        });
+
+                    b.Navigation("Email")
+                        .IsRequired();
+
+                    b.Navigation("Nome")
                         .IsRequired();
                 });
 

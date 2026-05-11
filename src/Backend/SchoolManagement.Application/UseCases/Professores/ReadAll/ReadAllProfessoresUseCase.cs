@@ -1,7 +1,7 @@
 using SchoolManagement.Application.Services.Mapper;
 using SchoolManagement.Communication.ResponsesDto;
 using SchoolManagement.Domain.Entities;
-using SchoolManagement.Domain.Interfaces;
+using SchoolManagement.Domain.Interfaces.Repositories;
 
 namespace SchoolManagement.Application.UseCases.Professores.ReadAll
 {

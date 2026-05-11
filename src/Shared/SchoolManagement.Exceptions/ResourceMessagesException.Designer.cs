@@ -169,6 +169,24 @@ namespace SchoolManagement.Exceptions {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Incorrect email or password.
+        /// </summary>
+        public static string EMAIL_OR_PASSWORD_INCORRECT {
+            get {
+                return ResourceManager.GetString("EMAIL_OR_PASSWORD_INCORRECT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Email or password invalid.
+        /// </summary>
+        public static string EMAIL_OR_PASSWORD_INVALID {
+            get {
+                return ResourceManager.GetString("EMAIL_OR_PASSWORD_INVALID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a The hourly wage cannot be empty..
         /// </summary>
         public static string HOURLY_WAGE_EMPTY {
@@ -183,6 +201,24 @@ namespace SchoolManagement.Exceptions {
         public static string HOURLY_WAGE_OUTSIDE_RANGE {
             get {
                 return ResourceManager.GetString("HOURLY_WAGE_OUTSIDE_RANGE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a The IsAdmin field cannot be empty..
+        /// </summary>
+        public static string ISADMIN_EMPTY {
+            get {
+                return ResourceManager.GetString("ISADMIN_EMPTY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a The IsAdmin Field must be boolean..
+        /// </summary>
+        public static string ISADMIN_INVALID {
+            get {
+                return ResourceManager.GetString("ISADMIN_INVALID", resourceCulture);
             }
         }
         
@@ -219,6 +255,24 @@ namespace SchoolManagement.Exceptions {
         public static string NAME_WITH_NUMBERS {
             get {
                 return ResourceManager.GetString("NAME_WITH_NUMBERS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a The request has no token.
+        /// </summary>
+        public static string NO_TOKEN {
+            get {
+                return ResourceManager.GetString("NO_TOKEN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a The password cannot be empty..
+        /// </summary>
+        public static string PASSWORD_EMPTY {
+            get {
+                return ResourceManager.GetString("PASSWORD_EMPTY", resourceCulture);
             }
         }
         
@@ -277,6 +331,15 @@ namespace SchoolManagement.Exceptions {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Token is expired.
+        /// </summary>
+        public static string TOKEN_IS_EXPIRED {
+            get {
+                return ResourceManager.GetString("TOKEN_IS_EXPIRED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a neutro.
         /// </summary>
         public static string TURN_INVALID {
@@ -291,6 +354,15 @@ namespace SchoolManagement.Exceptions {
         public static string UNKNOWN_ERROR {
             get {
                 return ResourceManager.GetString("UNKNOWN_ERROR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a User without permission access resource.
+        /// </summary>
+        public static string USER_WITHOUT_PERMISSION_ACCESS_RESOURCE {
+            get {
+                return ResourceManager.GetString("USER_WITHOUT_PERMISSION_ACCESS_RESOURCE", resourceCulture);
             }
         }
         

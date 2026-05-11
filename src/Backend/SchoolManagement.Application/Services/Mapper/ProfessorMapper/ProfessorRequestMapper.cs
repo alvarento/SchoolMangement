@@ -13,7 +13,7 @@ namespace SchoolManagement.Application.Services.Mapper.ProfessorMapper
 				req.Sexo,
 				req.Telefone,
 				req.Email,
-				req.DataNascimento,
+				req.DataNascimento!.Value,
 				req.CargaHorariaSemanal,
 				req.ValorHora,
 				req.Titulacao

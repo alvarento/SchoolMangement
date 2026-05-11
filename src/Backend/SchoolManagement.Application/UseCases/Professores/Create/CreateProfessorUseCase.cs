@@ -5,6 +5,7 @@ using SchoolManagement.Communication.ResponsesDto;
 using SchoolManagement.Domain.Interfaces;
 using SchoolManagement.Domain.Entities;
 using SchoolManagement.Exceptions;
+using SchoolManagement.Domain.Interfaces.Repositories;
 
 namespace SchoolManagement.Application.UseCases.Professores.Create
 {

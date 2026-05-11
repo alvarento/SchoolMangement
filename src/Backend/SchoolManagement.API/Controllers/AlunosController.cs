@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SchoolManagement.API.Attributes;
 using SchoolManagement.Application.UseCases.Alunos.Create;
 using SchoolManagement.Application.UseCases.Alunos.Delete;
 using SchoolManagement.Application.UseCases.Alunos.Read;
@@ -9,9 +10,8 @@ using SchoolManagement.Communication.ResponsesDto;
 
 namespace SchoolManagement.API.Controllers
 {
-	[Route("[controller]")]
-	[ApiController]
-	public class AlunosController : ControllerBase
+	[AuthUsuario]
+	public class AlunosController : SchoolManagementBaseController
 	{
 		[HttpPost]
 		[ProducesResponseType(typeof(ResponseCreateAlunoDto), StatusCodes.Status201Created)]

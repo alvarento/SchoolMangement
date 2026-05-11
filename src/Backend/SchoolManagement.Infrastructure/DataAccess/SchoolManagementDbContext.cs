@@ -9,6 +9,7 @@ namespace SchoolManagement.Infrastructure.DataAcess
 		{
 		}
 
+		public DbSet<Usuario> Usuarios { get; set; }
 		public DbSet<Pessoa> Pessoas { get; set; }
 		public DbSet<Aluno> Alunos { get; set; }
 		public DbSet<Professor> Professores { get; set; }

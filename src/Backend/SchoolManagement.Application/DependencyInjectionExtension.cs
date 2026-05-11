@@ -18,6 +18,9 @@ using SchoolManagement.Application.UseCases.Professores.Update;
 using SchoolManagement.Communication.RequestsDto;
 using SchoolManagement.Communication.ResponsesDto;
 using SchoolManagement.Domain.Entities;
+using SchoolManagement.Application.Services.Mapper.UsuarioMapper;
+using SchoolManagement.Application.UseCases.Usuarios.Create;
+using SchoolManagement.Application.UseCases.Login.DoLogin;
 
 namespace SchoolManagement.Application
 {
@@ -38,6 +41,7 @@ namespace SchoolManagement.Application
 
 		private static void AddMapper(IServiceCollection services)
 		{
+			services.AddScoped<IMapper<Communication.RequestsDto.RequestCreateUsuarioDto, Usuario>, CreateUsuarioRequestMapper>();
 			services.AddScoped<IMapper<RequestCreateAlunoDto, Aluno>, AlunoRequestMapper>();
 			services.AddScoped<IMapper<Aluno, ResponseReadAlunoDto>, AlunoResponseMapper>();
 			services.AddScoped<IUpdateMapper<RequestUpdateAlunoDto, Aluno>, UpdateAlunoRequestMapper>();
@@ -46,11 +50,13 @@ namespace SchoolManagement.Application
 			services.AddScoped<IMapper<Professor, ResponseReadProfessorDto>, ProfessorResponseMapper>();
 			services.AddScoped<IUpdateMapper<RequestUpdateProfessorDto, Professor>, UpdateProfessorRequestMapper>();
 
-
 		}
 
 		private static void AddUseCases(IServiceCollection services)
 		{
+			services.AddScoped<ICreateUsuarioUseCase, CreateUsuarioUseCase>();
+			services.AddScoped<IDoLoginUseCase, DoLoginUseCase>();
+
 			services.AddScoped<ICreateAlunoUseCase, CreateAlunoUseCase>();
 			services.AddScoped<IReadAlunoUseCase, ReadAlunoUseCase>();
 			services.AddScoped<IUpdateAlunoUseCase, UpdateAlunoUseCase>();

@@ -12,7 +12,7 @@ public class AlunoRequestMapper : IMapper<RequestCreateAlunoDto, Aluno>
 			req.Sexo,
 			req.Telefone,
 			req.Email,
-			req.DataNascimento
+			req.DataNascimento!.Value
 		);
 	}
 }

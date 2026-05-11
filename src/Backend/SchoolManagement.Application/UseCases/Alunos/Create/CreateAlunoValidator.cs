@@ -24,7 +24,7 @@ namespace SchoolManagement.Application.UseCases.Alunos.Create
 			RuleFor(aluno => aluno.Cpf).NotEmpty().WithMessage(ResourceMessagesException.CPF_EMPTY);
 			RuleFor(aluno => aluno.Cpf).Must(CpfValidator.ValidateCpf).WithMessage(ResourceMessagesException.CPF_INVALID);
 
-			RuleFor(aluno => aluno.DataNascimento).Cascade(CascadeMode.Stop).ValidarDataNascimento();
+			RuleFor(aluno => aluno.DataNascimento!.Value).Cascade(CascadeMode.Stop).ValidarDataNascimento();
 		}
 
 	}
