@@ -1,10 +1,12 @@
-﻿@using SchoolManagement.Communication.ResponsesDto
+﻿@rendermode @(new InteractiveServerRenderMode(prerender: false))
+@using SchoolManagement.Communication.ResponsesDto
 @using SchoolManagement.WebApp.Services.AlunoService
 @using System.Collections.ObjectModel
 @inject NotificationService NotificationService
 @inject DialogService DialogService
 @inject IAlunoService service
 @inject NavigationManager Navigation
+@inject IJSRuntime JS
 
 <div class="rz-p-4">
     <div class="rz-display-flex rz-justify-content-between rz-align-items-center rz-mb-4">
@@ -19,7 +21,7 @@
             <RadzenText TextStyle="TextStyle.Body1" class="rz-mt-4">Carregando dados da API...</RadzenText>
         </div>
     }
-    else if (alunos == null || !alunos.Any())
+    else if (alunos == null)
     {
         <RadzenAlert AlertStyle="AlertStyle.Info" Variant="Variant.Flat" Shade="Shade.Lighter">
             Nenhum aluno encontrado ou erro na conexão com a API.
@@ -32,10 +34,13 @@
                         AllowSorting="true" Data="@alunos" TItem="ResponseReadAlunoDto"
                         ColumnWidth="200px" SelectionMode="DataGridSelectionMode.Single">
             <Columns>
-                <RadzenDataGridColumn Property="@nameof(ResponseReadAlunoDto.Id)" Title="ID" Width="80px" TextAlign="TextAlign.Center" />
-                <RadzenDataGridColumn Property="@nameof(ResponseReadAlunoDto.Nome)" Title="Nome" Width="250px" />
-                <RadzenDataGridColumn Property="@nameof(ResponseReadAlunoDto.Email)" Title="Email" Width="250px" />
-                <RadzenDataGridColumn Property="@nameof(ResponseReadAlunoDto.Cpf)" Title="CPF" Width="150px" />
+                <RadzenDataGridColumn Property="@nameof(ResponseReadAlunoDto.Id)" Filterable="false" Title="ID" Frozen="true" Width="80px" TextAlign="TextAlign.Center" />
+                <RadzenDataGridColumn Property="@nameof(ResponseReadAlunoDto.Nome)" Title="Nome" Frozen="true" Width="160px" />
+                <RadzenDataGridColumn Property="@nameof(ResponseReadAlunoDto.Cpf)" Title="Cpf" Width="160px" />
+                <RadzenDataGridColumn Property="@nameof(ResponseReadAlunoDto.Email)" Title="Email" Width="200px" />
+                <RadzenDataGridColumn Property="@nameof(ResponseReadAlunoDto.Telefone)" Title="Telefone" Width="120px" />
+                <RadzenDataGridColumn Property="@nameof(ResponseReadAlunoDto.Sexo)" Title="Sexo" Width="70px" />
+                <RadzenDataGridColumn Property="@nameof(ResponseReadAlunoDto.StatusAluno)" Title="Status Aluno" FormatString="{0:d}" Width="160px" />
                 
                 <RadzenDataGridColumn Title="Ações" Sortable="false" Filterable="false" Width="120px" TextAlign="TextAlign.Center">
                     <Template Context="aluno">
@@ -54,9 +59,15 @@
     private ObservableCollection<ResponseReadAlunoDto> alunos = new();
     private bool isLoading = true;
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        await GetAlunosList();
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("console.log", "Mensagem vinda do C#");
+            var json = await JS.InvokeAsync<string>("localStorage.getItem", "authToken");
+            await JS.InvokeVoidAsync("console.log", json);
+            await GetAlunosList();
+        }
     }
 
     private async Task GetAlunosList()
@@ -74,7 +85,7 @@
             }
             else
             {
-                alunos = new();
+                alunos = new ObservableCollection<ResponseReadAlunoDto>();
             }
         }
         catch (Exception ex)
@@ -85,6 +96,7 @@
         finally
         {
             isLoading = false;
+            StateHasChanged();
         }
     }
 

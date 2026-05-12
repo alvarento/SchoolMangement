@@ -15,18 +15,29 @@ namespace SchoolManagement.WebApp.Services.LocalStorageService
 
         public async Task SetItemAsync<T>(string key, T value)
         {
-            var json = JsonSerializer.Serialize(value);
-            await _jsRuntime.InvokeVoidAsync("localStorage.setItem", key, json);
+            object valueToSave = value is string str ? str : JsonSerializer.Serialize(value);
+            await _jsRuntime.InvokeVoidAsync("localStorage.setItem", key, valueToSave);
         }
 
         public async Task<T?> GetItemAsync<T>(string key)
         {
-            var json = await _jsRuntime.InvokeAsync<string>("localStorage.getItem", key);
+            try
+            {
+                var json = await _jsRuntime.InvokeAsync<string>("localStorage.getItem", key);
 
-            if (string.IsNullOrEmpty(json))
+
+                if (string.IsNullOrEmpty(json))
+                    return default;
+
+                if (typeof(T) == typeof(string))
+                    return (T)(object)json;
+
+                return JsonSerializer.Deserialize<T>(json);
+            }
+            catch (InvalidOperationException)
+            {
                 return default;
-
-            return JsonSerializer.Deserialize<T>(json);
+            }
         }
 
         public async Task RemoveItemAsync(string key)

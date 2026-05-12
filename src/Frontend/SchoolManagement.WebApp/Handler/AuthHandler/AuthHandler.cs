@@ -23,9 +23,9 @@ namespace SchoolManagement.WebApp.Handler.AuthHandler
                     request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
                 }
             }
-            catch 
+            catch (Exception ex)
             {
-
+                Console.WriteLine($"Erro no AuthHandler: {ex.Message}");
             }
 
             return await base.SendAsync(request, cancellationToken);
