@@ -10,7 +10,7 @@ namespace SchoolManagement.WebApp.Services.AlunoService
             public AlunoService(HttpClient http) => _http = http;
             public async Task<PagedResponse<ResponseReadAlunoDto>> GetAll()
             {
-            var response = await _http.GetAsync("api/alunos");
+            var response = await _http.GetAsync("/alunos");
 
             if (response.IsSuccessStatusCode)
             {

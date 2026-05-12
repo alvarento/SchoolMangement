@@ -1,9 +1,12 @@
+using Microsoft.AspNetCore.Components.Authorization;
 using Radzen;
 using SchoolManagement.Communication.Utils.Logs;
 using SchoolManagement.WebApp.Components;
 using SchoolManagement.WebApp.Handler.AuthHandler;
 using SchoolManagement.WebApp.Services.AlunoService;
+using SchoolManagement.WebApp.Services.AuthStateService;
 using SchoolManagement.WebApp.Services.LocalStorageService;
+using SchoolManagement.WebApp.Services.LoginService;
 
 Console.OutputEncoding = System.Text.Encoding.UTF8;
 
@@ -17,12 +20,46 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddRadzenComponents();
 
+//builder.Services.AddAuthentication();
+//builder.Services.AddAuthentication(options =>
+//{
+//	options.DefaultScheme = "Manual";
+//	options.DefaultChallengeScheme = "Manual";
+//});
+//.AddCookie("Manual");
+builder.Services.AddAuthentication("Manual")
+	.AddCookie("Manual", options =>
+	{
+		// Isso impede que o ASP.NET tente redirecionar via Servidor
+		options.LoginPath = "/login";
+		options.Events.OnRedirectToLogin = context =>
+		{
+			context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+			return Task.CompletedTask;
+		};
+	});
+
+//builder.Services.AddAuthentication("Cookies")
+//	.AddCookie("Cookies", options =>
+//	{
+//		options.LoginPath = "/login";
+//	});
+
+
+builder.Services.AddAuthorizationCore();
+builder.Services.AddCascadingAuthenticationState();
+
+builder.Services.AddTransient<AuthHandler>();
 builder.Services.AddHttpClient<IAlunoService, AlunoService>(client => client.BaseAddress = baseUrl)
     .AddHttpMessageHandler<AuthHandler>();
 
-builder.Services.AddTransient<AuthHandler>();
-builder.Services.AddScoped<IAlunoService, AlunoService>();
 builder.Services.AddScoped<ILocalStorageService, LocalStorageService>();
+builder.Services.AddScoped<AuthStateService>();
+builder.Services.AddScoped<AuthenticationStateProvider>(sp => sp.GetRequiredService<AuthStateService>());
+
+
+builder.Services.AddHttpClient<ILoginService, LoginService>(client => client.BaseAddress = baseUrl);
+
 
 
 PrintLauchConsole(builder.Configuration);
@@ -38,6 +75,9 @@ if (!app.Environment.IsDevelopment())
 }
 app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseAntiforgery();
 

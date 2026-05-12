@@ -57,6 +57,9 @@ builder.Services.AddMvc(options => options.Filters.Add(typeof(ExceptionFilter)))
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
+
+builder.Services.AddHttpContextAccessor();
+
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Logging.AddFilter("Microsoft.Hosting.Lifetime", LogLevel.None);

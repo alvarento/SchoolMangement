@@ -14,11 +14,18 @@ namespace SchoolManagement.WebApp.Handler.AuthHandler
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            var token = await _localStorage.GetItemAsync<string>("authToken");
-
-            if (!string.IsNullOrEmpty(token))
+            try
             {
-                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                var token = await _localStorage.GetItemAsync<string>("authToken");
+
+                if (!string.IsNullOrEmpty(token))
+                {
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                }
+            }
+            catch 
+            {
+
             }
 
             return await base.SendAsync(request, cancellationToken);

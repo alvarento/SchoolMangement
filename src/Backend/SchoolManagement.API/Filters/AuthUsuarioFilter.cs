@@ -57,13 +57,16 @@ namespace SchoolManagement.API.Filters
 
 		private static string TokenOnRequest(AuthorizationFilterContext context)
 		{
-			string auth = context.HttpContext.Request.Headers.Authorization.ToString();
+			string authToken = context.HttpContext.Request.Headers.Authorization.ToString();
 
-			if (string.IsNullOrWhiteSpace(auth))
+			if (string.IsNullOrWhiteSpace(authToken))
 				throw new UnauthorizedException(ResourceMessagesException.NO_TOKEN);
 
-			return auth["Bearer ".Length..].Trim();
+			if(authToken.Contains("Bearer")) return authToken["Bearer ".Length..].Trim();
+
+			return authToken;
 		}
 	}
 }
+
 

@@ -1,0 +1,10 @@
+﻿@inject NavigationManager Navigation
+
+@code {
+    protected override void OnInitialized()
+    {
+        // Use true para forçar o recarregamento se necessário,
+        // ou false para uma navegação interna limpa.
+        Navigation.NavigateTo("/login", true);
+    }
+}

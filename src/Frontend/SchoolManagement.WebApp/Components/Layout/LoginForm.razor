@@ -1,8 +1,10 @@
 ﻿@using SchoolManagement.Communication.RequestsDto
 @using SchoolManagement.Communication.ResponsesDto
 @using SchoolManagement.WebApp.Services.LoginService
+@using SchoolManagement.WebApp.Services.AuthStateService
 @inject ILoginService service
 @inject NotificationService NotificationService
+@inject AuthStateService authStateService
 @inject NavigationManager Navigation
 
 <RadzenTemplateForm Data="@login" Style="width: 100%" TItem="RequestLoginDto" Submit="@HandleSubmit">
@@ -45,23 +47,29 @@
     {
         var response = await service.Login(loginDto);
 
-        if (response != null && response.Tokens != null)
+        if (response?.Tokens != null)
         {
+
+            // 2. NOTIFICAR O SUCESSO (Visual)
             NotificationService.Notify(new NotificationMessage
             {
                 Severity = NotificationSeverity.Success,
                 Summary = "Bem-vindo",
-                Detail = $"Olá, {response.Nome}! Login realizado com sucesso."
+                Detail = $"Olá, {response.Nome}! Login realizado com sucesso.",
+                Duration = 3000
             });
 
+            // 3. ATUALIZAR O ESTADO GLOBAL (O sistema percebe que logou)
+            authStateService.NotifyLogin(response.Tokens.AcessToken);
+
+            // 4. EXECUTAR O EVENTO (Opcional, apenas se houver um pai escutando)
             if (OnLoginSuccess.HasDelegate)
             {
                 await OnLoginSuccess.InvokeAsync();
             }
-            else
-            {
-                Navigation.NavigateTo("/");
-            }
+
+            // 5. REDIRECIONAR (Fora do IF do Delegate)
+            Navigation.NavigateTo("/dashboard");
         }
         else
         {
@@ -76,6 +84,6 @@
 
     private void Cancel()
     {
-        Navigation.NavigateTo("/");
+        // Navigation.NavigateTo("/");
     }
 }

@@ -29,7 +29,8 @@ namespace SchoolManagement.WebApp.Services.LoginService
                     {
                         // O pacote Blazored.LocalStorage é assíncrono
                         await _localStorage.SetItemAsync<string>("authToken", result.Tokens.AcessToken);
-                    }
+
+					}
                     return result;
                 }
                 return null;
