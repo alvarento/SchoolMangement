@@ -2,11 +2,9 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Radzen;
 using SchoolManagement.Communication.Utils.Logs;
 using SchoolManagement.WebApp.Components;
-using SchoolManagement.WebApp.Handler;
 using SchoolManagement.WebApp.Handler.AuthHandler;
 using SchoolManagement.WebApp.Services.AlunoService;
 using SchoolManagement.WebApp.Services.AuthStateService;
-using SchoolManagement.WebApp.Services.LocalStorageService;
 using SchoolManagement.WebApp.Services.LoginService;
 
 Console.OutputEncoding = System.Text.Encoding.UTF8;
@@ -50,15 +48,17 @@ builder.Services.AddAuthentication("Manual")
 builder.Services.AddAuthorizationCore();
 builder.Services.AddCascadingAuthenticationState();
 
+builder.Services.AddHttpContextAccessor();
+
 builder.Services.AddHttpClient<ILoginService, LoginService>(
 	client => client.BaseAddress = baseUrl);
 
+
 builder.Services.AddTransient<AuthHandler>();
-builder.Services.AddScoped<ITokenProvider, TokenProvider>();
 builder.Services.AddHttpClient<IAlunoService, AlunoService>(client => client.BaseAddress = baseUrl)
     .AddHttpMessageHandler<AuthHandler>();
 
-builder.Services.AddScoped<ILocalStorageService, LocalStorageService>();
+builder.Services.AddScoped<ITokenProvider, TokenProvider>();
 builder.Services.AddScoped<IAuthStateService, AuthStateService>();
 builder.Services.AddScoped<AuthenticationStateProvider>(
 	sp => (AuthStateService)sp.GetRequiredService<IAuthStateService>());

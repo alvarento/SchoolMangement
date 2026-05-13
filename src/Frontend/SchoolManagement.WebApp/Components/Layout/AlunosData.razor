@@ -10,8 +10,8 @@
 @inject IAlunoService service
 
 <div class="rz-p-4">
-    <div class="rz-display-flex rz-justify-content-between rz-align-items-center rz-mb-4">
-        <RadzenText TextStyle="TextStyle.H4" TagName="TagName.H1">Gerenciamento de Alunos</RadzenText>
+    <div class="header-datagrid rz-display-flex rz-justify-content-between">
+        <p>Gerenciamento de Alunos</p>
         <RadzenButton Click="@NovoAluno" Text="Novo Aluno" Icon="add_circle" ButtonStyle="ButtonStyle.Primary" />
     </div>
 
@@ -30,7 +30,7 @@
     }
     else
     {
-        <RadzenDataGrid AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+        <RadzenDataGrid AllowFiltering="false" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
                         FilterMode="FilterMode.Advanced" AllowPaging="true" PageSize="10"
                         AllowSorting="true" Data="@alunos" TItem="ResponseReadAlunoDto"
                         ColumnWidth="200px" SelectionMode="DataGridSelectionMode.Single">
@@ -60,11 +60,16 @@
     private ObservableCollection<ResponseReadAlunoDto> alunos = new();
     private bool isLoading = true;
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (!firstRender)
-            return;
+    // protected override async Task OnAfterRenderAsync(bool firstRender)
+    // {
+    //     if (!firstRender)
+    //         return;
 
+    //     await GetAlunosList();
+    // }
+
+    protected override async Task OnInitializedAsync()
+    {
         await GetAlunosList();
     }
 

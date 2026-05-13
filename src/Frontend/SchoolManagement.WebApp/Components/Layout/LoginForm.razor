@@ -1,8 +1,10 @@
 ﻿@using SchoolManagement.Communication.RequestsDto
 @using SchoolManagement.Communication.ResponsesDto
 @using SchoolManagement.WebApp.Services.LoginService
+@using Microsoft.JSInterop;
 
 @inject ILoginService service
+@inject IJSRuntime JS
 @inject NotificationService NotificationService
 @inject NavigationManager Navigation
 
@@ -82,7 +84,7 @@
     {
         var response = await service.Login(loginDto);
 
-        if (response?.Tokens != null)
+        if (response?.Tokens.AcessToken != null)
         {
             NotificationService.Notify(new NotificationMessage
             {
@@ -92,10 +94,9 @@
                 Duration = 3000
             });
 
-            // if (OnLoginSuccess.HasDelegate)
-            // {
-            //     await OnLoginSuccess.InvokeAsync();
-            // }
+            await JS.InvokeVoidAsync("setCookie", "authToken", response.Tokens.AcessToken, 60);
+
+          
             await InvokeAsync(StateHasChanged);
             await Task.Delay(50);
             Navigation.NavigateTo("/dashboard", true);

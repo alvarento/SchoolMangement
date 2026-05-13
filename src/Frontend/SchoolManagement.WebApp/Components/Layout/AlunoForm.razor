@@ -14,14 +14,17 @@
 	<ChildContent Context="formContext">
 		<DataAnnotationsValidator />
 		<div class="mb-4">
-			<RadzenTextBox @bind-Value="aluno.Nome" Name="Nome" Placeholder="Nome" Style="width:100%" />
+			<RadzenTextBox @bind-Value="aluno.Nome" Name="Nome"  Placeholder="Nome" Style="width:100%" />
 			<ValidationMessage For="@(() => aluno.Nome)" />
 		</div>
 
-		<div class ="mb-4">
-			<RadzenTextBox @bind-Value="aluno.Cpf" Name="Cpf" Placeholder="CPF" Style="width:100%" />
+		<div class="md-4">
+			<RadzenFormField Text="CPF" Variant="Variant.Outlined" class="mb-4" Style="width:100%">
+				<RadzenMask CharacterPattern="[0-9]" Placeholder=" " Name="Cpf" MaxLength="14" @bind-Value="@aluno.Cpf" />
+			</RadzenFormField>
 			<ValidationMessage For="@(() => aluno.Cpf)" />
 		</div>
+	
 
 		<div class="mb-4">
 			<RadzenDropDown @bind-Value="aluno.Sexo"
@@ -109,4 +112,5 @@
 			});
 		}
 	}
+
 }

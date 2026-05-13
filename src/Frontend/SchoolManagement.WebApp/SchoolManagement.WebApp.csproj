@@ -8,6 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Providers\**" />
+    <Content Remove="Providers\**" />
+    <EmbeddedResource Remove="Providers\**" />
+    <None Remove="Providers\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="Handler\UserSession.cs" />
   </ItemGroup>
 
@@ -20,10 +27,6 @@
     <ProjectReference Include="..\..\Backend\SchoolManagement.Domain\SchoolManagement.Domain.csproj" />
     <ProjectReference Include="..\..\Shared\SchoolManagement.Communication\SchoolManagement.Communication.csproj" />
     <ProjectReference Include="..\..\Shared\SchoolManagement.Exceptions\SchoolManagement.Exceptions.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Providers\" />
   </ItemGroup>
 
 </Project>
