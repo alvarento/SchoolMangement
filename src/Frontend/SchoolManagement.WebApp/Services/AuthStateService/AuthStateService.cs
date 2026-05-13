@@ -1,73 +1,139 @@
 ﻿using System.Security.Claims;
-using System.Text.Json; // Necessário para o JWT
+using System.Text.Json;
 using Microsoft.AspNetCore.Components.Authorization;
 using SchoolManagement.WebApp.Services.LocalStorageService;
 
 namespace SchoolManagement.WebApp.Services.AuthStateService
 {
-	public class AuthStateService : AuthenticationStateProvider
+	public class AuthStateService :
+		AuthenticationStateProvider,
+		IAuthStateService
 	{
 		private readonly ILocalStorageService _localStorage;
+		private readonly ITokenProvider _tokenProvider;
+		private bool _initialized;
 
-		// Remova o HttpClient daqui. O AuthHandler cuidará do Header de forma mais segura.
-		public AuthStateService(ILocalStorageService localStorage)
+
+		public ClaimsPrincipal CurrentUser { get; private set; }
+			= new(new ClaimsIdentity());
+
+		public AuthStateService(ILocalStorageService localStorage, ITokenProvider tokenProvider)
 		{
 			_localStorage = localStorage;
+			_tokenProvider = tokenProvider;
 		}
 
-		public override async Task<AuthenticationState> GetAuthenticationStateAsync()
+		public async Task InitializeAsync()
 		{
+
+			if (_initialized) return;
+
 			try
 			{
-				var token = await _localStorage.GetItemAsync<string>("authToken");
+				_tokenProvider.Token = await _localStorage.GetItemAsync<string>("authToken");
 
-				if (string.IsNullOrWhiteSpace(token))
+				if (string.IsNullOrWhiteSpace(_tokenProvider.Token))
 				{
-					return CreateAnonymous();
+					CurrentUser = new ClaimsPrincipal(
+					  new ClaimsIdentity());
+
+					NotifyAuthenticationStateChanged(
+						Task.FromResult(
+							new AuthenticationState(CurrentUser)));
+
+					_initialized = true;
+					return;
 				}
 
-				var identity = new ClaimsIdentity(ParseClaimsFromJwt(token), "jwt");
-				var user = new ClaimsPrincipal(identity);
+				var identity = new ClaimsIdentity(
+					ParseClaimsFromJwt(_tokenProvider.Token),
+					"jwt");
 
-				return new AuthenticationState(user);
+				CurrentUser = new ClaimsPrincipal(identity);
+
+				NotifyAuthenticationStateChanged(
+					Task.FromResult(
+						new AuthenticationState(CurrentUser)));
+
+				_initialized = true;
 			}
 			catch
 			{
-				return CreateAnonymous();
+				CurrentUser = new ClaimsPrincipal(
+	new ClaimsIdentity());
+
+				NotifyAuthenticationStateChanged(
+					Task.FromResult(
+						new AuthenticationState(CurrentUser)));
+
+				_initialized = true;
 			}
 		}
 
-		public void NotifyLogin(string token)
+		public async Task LoginAsync(string token)
 		{
-			var identity = new ClaimsIdentity(ParseClaimsFromJwt(token), "jwt");
-			var user = new ClaimsPrincipal(identity);
-			var authState = Task.FromResult(new AuthenticationState(user));
-			NotifyAuthenticationStateChanged(authState);
+			_tokenProvider.Token = token;
+
+			await _localStorage.SetItemAsync("authToken", token);
+
+			var identity = new ClaimsIdentity(
+				ParseClaimsFromJwt(token),
+				"jwt");
+
+			CurrentUser = new ClaimsPrincipal(identity);
+
+			NotifyAuthenticationStateChanged(
+				Task.FromResult(
+					new AuthenticationState(CurrentUser)));
 		}
 
-		public void NotifyLogout()
+		public async Task LogoutAsync()
 		{
-			var anonymous = CreateAnonymous();
-			NotifyAuthenticationStateChanged(Task.FromResult(anonymous));
+
+			_initialized = false;
+			_tokenProvider.Token = null;
+
+			await _localStorage.RemoveItemAsync("authToken");
+
+			CurrentUser = new ClaimsPrincipal(
+				new ClaimsIdentity());
+
+			NotifyAuthenticationStateChanged(
+				Task.FromResult(
+					new AuthenticationState(CurrentUser)));
 		}
 
-		private AuthenticationState CreateAnonymous() =>
-			new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
+		public Task<string?> GetTokenAsync()
+		{
+			return Task.FromResult(_tokenProvider.Token);
+		}
+
+		public override Task<AuthenticationState> GetAuthenticationStateAsync()
+		{
+			return Task.FromResult(
+				new AuthenticationState(CurrentUser));
+		}
 
 		private IEnumerable<Claim> ParseClaimsFromJwt(string jwt)
 		{
 			var claims = new List<Claim>();
-			var payload = jwt.Split('.')[1];
-			var jsonBytes = ParseBase64WithoutPadding(payload);
-			var keyValuePairs = JsonSerializer.Deserialize<Dictionary<string, object>>(jsonBytes);
 
-			if (keyValuePairs != null)
+			var payload = jwt.Split('.')[1];
+
+			var jsonBytes = ParseBase64WithoutPadding(payload);
+
+			var keyValuePairs =
+				JsonSerializer.Deserialize<Dictionary<string, object>>(jsonBytes);
+
+			if (keyValuePairs is null)
+				return claims;
+
+			foreach (var kvp in keyValuePairs)
 			{
-				foreach (var kvp in keyValuePairs)
-				{
-					claims.Add(new Claim(kvp.Key, kvp.Value.ToString() ?? ""));
-				}
+				claims.Add(
+					new Claim(kvp.Key, kvp.Value?.ToString() ?? ""));
 			}
+
 			return claims;
 		}
 
@@ -75,9 +141,15 @@ namespace SchoolManagement.WebApp.Services.AuthStateService
 		{
 			switch (base64.Length % 4)
 			{
-				case 2: base64 += "=="; break;
-				case 3: base64 += "="; break;
+				case 2:
+					base64 += "==";
+					break;
+
+				case 3:
+					base64 += "=";
+					break;
 			}
+
 			return Convert.FromBase64String(base64);
 		}
 	}

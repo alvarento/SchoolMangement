@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Radzen;
 using SchoolManagement.Communication.Utils.Logs;
 using SchoolManagement.WebApp.Components;
+using SchoolManagement.WebApp.Handler;
 using SchoolManagement.WebApp.Handler.AuthHandler;
 using SchoolManagement.WebApp.Services.AlunoService;
 using SchoolManagement.WebApp.Services.AuthStateService;
@@ -16,7 +17,7 @@ Uri baseUrl = new Uri(builder.Configuration["ApiConfig:BaseUrl"] ?? "https://loc
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
-	.AddInteractiveServerComponents();
+	.AddInteractiveServerComponents(options => options.DetailedErrors = true);
 
 builder.Services.AddRadzenComponents();
 
@@ -49,13 +50,18 @@ builder.Services.AddAuthentication("Manual")
 builder.Services.AddAuthorizationCore();
 builder.Services.AddCascadingAuthenticationState();
 
+builder.Services.AddHttpClient<ILoginService, LoginService>(
+	client => client.BaseAddress = baseUrl);
+
 builder.Services.AddTransient<AuthHandler>();
+builder.Services.AddScoped<ITokenProvider, TokenProvider>();
 builder.Services.AddHttpClient<IAlunoService, AlunoService>(client => client.BaseAddress = baseUrl)
     .AddHttpMessageHandler<AuthHandler>();
 
 builder.Services.AddScoped<ILocalStorageService, LocalStorageService>();
-builder.Services.AddScoped<AuthStateService>();
-builder.Services.AddScoped<AuthenticationStateProvider>(sp => sp.GetRequiredService<AuthStateService>());
+builder.Services.AddScoped<IAuthStateService, AuthStateService>();
+builder.Services.AddScoped<AuthenticationStateProvider>(
+	sp => (AuthStateService)sp.GetRequiredService<IAuthStateService>());
 
 
 builder.Services.AddHttpClient<ILoginService, LoginService>(client => client.BaseAddress = baseUrl);

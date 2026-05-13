@@ -1,12 +1,13 @@
 ﻿@rendermode @(new InteractiveServerRenderMode(prerender: false))
+
+@using Microsoft.AspNetCore.Authorization
 @using SchoolManagement.Communication.ResponsesDto
 @using SchoolManagement.WebApp.Services.AlunoService
 @using System.Collections.ObjectModel
+
 @inject NotificationService NotificationService
 @inject DialogService DialogService
 @inject IAlunoService service
-@inject NavigationManager Navigation
-@inject IJSRuntime JS
 
 <div class="rz-p-4">
     <div class="rz-display-flex rz-justify-content-between rz-align-items-center rz-mb-4">
@@ -61,13 +62,10 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender)
-        {
-            await JS.InvokeVoidAsync("console.log", "Mensagem vinda do C#");
-            var json = await JS.InvokeAsync<string>("localStorage.getItem", "authToken");
-            await JS.InvokeVoidAsync("console.log", json);
-            await GetAlunosList();
-        }
+        if (!firstRender)
+            return;
+
+        await GetAlunosList();
     }
 
     private async Task GetAlunosList()
@@ -75,22 +73,21 @@
         try
         {
             isLoading = true;
+
             var response = await service.GetAll();
 
-            // Proteção contra NullReferenceException
-            if (response?.Data != null)
-            {
-                Console.WriteLine(alunos);
-                alunos = new ObservableCollection<ResponseReadAlunoDto>(response.Data.OrderBy(a => a.Nome));
-            }
-            else
-            {
-                alunos = new ObservableCollection<ResponseReadAlunoDto>();
-            }
+            alunos = response?.Data != null
+                ? new ObservableCollection<ResponseReadAlunoDto>(
+                    response.Data.OrderBy(a => a.Nome))
+                : new ObservableCollection<ResponseReadAlunoDto>();
         }
         catch (Exception ex)
         {
-            NotificationService.Notify(NotificationSeverity.Error, "Erro", "Não foi possível carregar a lista.");
+            NotificationService.Notify(
+                NotificationSeverity.Error,
+                "Erro",
+                "Não foi possível carregar a lista.");
+
             Console.WriteLine(ex.Message);
         }
         finally

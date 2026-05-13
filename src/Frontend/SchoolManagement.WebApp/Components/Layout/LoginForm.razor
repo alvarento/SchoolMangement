@@ -1,47 +1,82 @@
 ﻿@using SchoolManagement.Communication.RequestsDto
 @using SchoolManagement.Communication.ResponsesDto
 @using SchoolManagement.WebApp.Services.LoginService
-@using SchoolManagement.WebApp.Services.AuthStateService
+
 @inject ILoginService service
 @inject NotificationService NotificationService
-@inject AuthStateService authStateService
 @inject NavigationManager Navigation
 
-<RadzenTemplateForm Data="@login" Style="width: 100%" TItem="RequestLoginDto" Submit="@HandleSubmit">
+<RadzenTemplateForm Data="@login"
+                    Style="width: 100%"
+                    TItem="RequestLoginDto"
+                    Submit="@HandleSubmit">
+
     <ChildContent Context="formContext">
+
         <DataAnnotationsValidator />
 
         <div class="rz-m-4">
-            <RadzenLabel Text="Email" Component="Email" Style="display: block" />
-            <RadzenTextBox @bind-Value="login.Email" Name="Email" Placeholder="exemplo@email.com" Style="width:100%" />
-            <RadzenRequiredValidator Component="Email" Text="E-mail é obrigatório" />
-            <RadzenEmailValidator Component="Email" Text="E-mail inválido" />
+            <RadzenLabel Text="Email"
+                         Component="Email"
+                         Style="display: block" />
+
+            <RadzenTextBox @bind-Value="login.Email"
+                           Name="Email"
+                           Placeholder="exemplo@email.com"
+                           Style="width:100%" />
+
+            <RadzenRequiredValidator Component="Email"
+                                     Text="E-mail é obrigatório" />
+
+            <RadzenEmailValidator Component="Email"
+                                  Text="E-mail inválido" />
         </div>
 
         <div class="rz-m-4">
-            <RadzenLabel Text="Senha" Component="Senha" Style="display: block" />
-            <RadzenPassword @bind-Value="login.Senha" Name="Senha" Placeholder="******" Style="width:100%" />
-            <RadzenRequiredValidator Component="Senha" Text="Senha é obrigatória" />
+
+            <RadzenLabel Text="Senha"
+                         Component="Senha"
+                         Style="display: block" />
+
+            <RadzenPassword @bind-Value="login.Senha"
+                            Name="Senha"
+                            Placeholder="******"
+                            Style="width:100%" />
+
+            <RadzenRequiredValidator Component="Senha"
+                                     Text="Senha é obrigatória" />
         </div>
 
         <div class="rz-display-flex rz-justify-content-end rz-gap-4 rz-m-4">
-            <RadzenButton Text="Entrar" ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Primary" />
+
+            <RadzenButton Text="Entrar"
+                          ButtonType="ButtonType.Submit"
+                          ButtonStyle="ButtonStyle.Primary" />
+
             <div class="rz-text-align-center rz-mt-4">
-                <RadzenText TextStyle="TextStyle.Caption">Não tem uma conta?</RadzenText>
+
+                <RadzenText TextStyle="TextStyle.Caption">
+                    Não tem uma conta?
+                </RadzenText>
+
                 <RadzenButton Text="Cadastre-se aqui"
                               Variant="Variant.Text"
                               ButtonStyle="ButtonStyle.Primary"
                               Click="@(() => Navigation.NavigateTo("/register"))" />
             </div>
+
         </div>
+
     </ChildContent>
+
 </RadzenTemplateForm>
 
 @code {
+
     private RequestLoginDto login = new();
 
-    // Evento para notificar a LoginPage que o login deu certo (opcional)
-    [Parameter] public EventCallback OnLoginSuccess { get; set; }
+    [Parameter]
+    public EventCallback OnLoginSuccess { get; set; }
 
     private async Task HandleSubmit(RequestLoginDto loginDto)
     {
@@ -49,8 +84,6 @@
 
         if (response?.Tokens != null)
         {
-
-            // 2. NOTIFICAR O SUCESSO (Visual)
             NotificationService.Notify(new NotificationMessage
             {
                 Severity = NotificationSeverity.Success,
@@ -59,17 +92,13 @@
                 Duration = 3000
             });
 
-            // 3. ATUALIZAR O ESTADO GLOBAL (O sistema percebe que logou)
-            authStateService.NotifyLogin(response.Tokens.AcessToken);
-
-            // 4. EXECUTAR O EVENTO (Opcional, apenas se houver um pai escutando)
-            if (OnLoginSuccess.HasDelegate)
-            {
-                await OnLoginSuccess.InvokeAsync();
-            }
-
-            // 5. REDIRECIONAR (Fora do IF do Delegate)
-            Navigation.NavigateTo("/dashboard");
+            // if (OnLoginSuccess.HasDelegate)
+            // {
+            //     await OnLoginSuccess.InvokeAsync();
+            // }
+            await InvokeAsync(StateHasChanged);
+            await Task.Delay(50);
+            Navigation.NavigateTo("/dashboard", true);
         }
         else
         {
@@ -80,10 +109,5 @@
                 Detail = "E-mail ou senha incorretos."
             });
         }
-    }
-
-    private void Cancel()
-    {
-        // Navigation.NavigateTo("/");
     }
 }

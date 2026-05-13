@@ -1,34 +1,33 @@
 ﻿using System.Net.Http.Headers;
-using SchoolManagement.WebApp.Services.LocalStorageService;
+using SchoolManagement.WebApp.Services.AuthStateService;
 
 namespace SchoolManagement.WebApp.Handler.AuthHandler
 {
-    public class AuthHandler : DelegatingHandler
-    {
-        private readonly ILocalStorageService _localStorage;
+	public class AuthHandler : DelegatingHandler
+	{
+		private readonly ITokenProvider _tokenProvider;
+		private readonly UserSession _session;
 
-        public AuthHandler(ILocalStorageService localStorage)
-        {
-            _localStorage = localStorage;
-        }
+		public AuthHandler(ITokenProvider tokenProvider)
+		{
+			_tokenProvider = tokenProvider;
+		}
 
-        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
-        {
-            try
-            {
-                var token = await _localStorage.GetItemAsync<string>("authToken");
+		protected override async Task<HttpResponseMessage> SendAsync(
+			HttpRequestMessage request,
+			CancellationToken cancellationToken)
+		{
+			var token = _tokenProvider.Token;
 
-                if (!string.IsNullOrEmpty(token))
-                {
-                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Erro no AuthHandler: {ex.Message}");
-            }
+			Console.WriteLine("Token: ", token);
 
-            return await base.SendAsync(request, cancellationToken);
-        }
-    }
+			if (!string.IsNullOrWhiteSpace(token))
+			{
+				request.Headers.Authorization =
+					new AuthenticationHeaderValue("Bearer", token);
+			}
+
+			return await base.SendAsync(request, cancellationToken);
+		}
+	}
 }
