@@ -1,0 +1,40 @@
+﻿@using Microsoft.AspNetCore.Components.Authorization
+
+<RadzenPanelMenu Match="NavLinkMatch.All">
+    
+    @* Item visível para todos (ou apenas logados, se preferir) *@
+    <RadzenPanelMenuItem Text="Dashboard" Path="dashboard" Icon="dashboard" />
+
+    @* Seção protegida: Só aparece se o usuário estiver autenticado *@
+    <AuthorizeView>
+        <Authorized>
+            <RadzenPanelMenuItem Text="Gestão Acadêmica" />
+            
+            <RadzenPanelMenuItem Text="Alunos" Path="alunos" Icon="school" />
+            
+            <RadzenPanelMenuItem Text="Professores" Path="professores" Icon="supervisor_account" />
+            
+            <RadzenPanelMenuItem Text="Turmas" Path="turmas" Icon="groups" />
+
+            <RadzenPanelMenuItem Text="Configurações" />
+            
+            <RadzenPanelMenuItem Text="Meu Perfil" Path="perfil" Icon="account_circle" />
+            
+            <RadzenPanelMenuItem Text="Configurações" Path="settings" Icon="settings" />
+        </Authorized>
+        
+        <NotAuthorized>
+            @* Opcional: Mostrar algo para quem não está logado, 
+               embora no seu caso o MainLayout só apareça em páginas privadas *@
+            <RadzenPanelMenuItem Text="Entrar no Sistema" Path="login" Icon="login" />
+        </NotAuthorized>
+    </AuthorizeView>
+
+</RadzenPanelMenu>
+
+<style>
+    /* Ajuste fino para combinar com o tema do Radzen */
+    .rz-panel-menu {
+        border: none !important;
+    }
+</style>

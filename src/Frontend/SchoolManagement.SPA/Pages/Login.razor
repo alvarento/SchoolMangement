@@ -1,0 +1,52 @@
+﻿@page "/login"
+@layout EmptyLayout
+
+<div class="login-page-wrapper">
+    <RadzenStack AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center" Style="min-height: 100vh;">
+        
+        <RadzenCard Variant="Variant.Flat" Class="rz-shadow-10 login-card">
+            <RadzenStack Gap="1.5rem" Class="rz-p-4">
+                
+                @* Logo ou Título *@
+                <RadzenStack AlignItems="AlignItems.Center" Gap="0">
+                    <RadzenIcon Icon="school" Style="font-size: 3rem; color: var(--rz-primary);" />
+                    <RadzenText TextStyle="TextStyle.H4" TagName="TagName.H1" Style="font-weight: bold;" Class="rz-m-0">
+                        School Management
+                    </RadzenText>
+                    <RadzenText TextStyle="TextStyle.Subtitle2" Style="color: var(--rz-text-secondary-color);">
+                        Entre com suas credenciais para continuar
+                    </RadzenText>
+                </RadzenStack>
+
+                <hr style="border: 0; border-top: 1px solid var(--rz-divider); margin: 0;" />
+
+                @* CHAMADA DO SEU COMPONENTE *@
+                <LoginForm />
+
+                @* Link para Registro *@
+                <RadzenStack AlignItems="AlignItems.Center">
+                    <RadzenText TextStyle="TextStyle.Body2">
+                        Novo por aqui? 
+                        <RadzenLink Path="register" Text="Crie uma conta" Style="font-weight: bold" />
+                    </RadzenText>
+                </RadzenStack>
+
+            </RadzenStack>
+        </RadzenCard>
+
+    </RadzenStack>
+</div>
+
+<style>
+    .login-page-wrapper {
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        width: 100%;
+        height: 100%;
+    }
+
+    .login-card {
+        max-width: 450px;
+        width: 100%;
+        border-radius: 1rem;
+    }
+</style>

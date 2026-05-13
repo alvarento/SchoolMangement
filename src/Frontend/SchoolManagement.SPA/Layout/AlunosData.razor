@@ -1,0 +1,149 @@
+﻿@rendermode @(new InteractiveServerRenderMode(prerender: false))
+
+@using Microsoft.AspNetCore.Authorization
+@using SchoolManagement.Communication.ResponsesDto
+@using SchoolManagement.WebApp.Services.AlunoService
+@using System.Collections.ObjectModel
+
+@inject NotificationService NotificationService
+@inject DialogService DialogService
+@inject IAlunoService service
+
+<div class="rz-p-4">
+    <div class="rz-display-flex rz-justify-content-between rz-align-items-center rz-mb-4">
+        <RadzenText TextStyle="TextStyle.H4" TagName="TagName.H1">Gerenciamento de Alunos</RadzenText>
+        <RadzenButton Click="@NovoAluno" Text="Novo Aluno" Icon="add_circle" ButtonStyle="ButtonStyle.Primary" />
+    </div>
+
+    @if (isLoading)
+    {
+        <div class="rz-display-flex rz-flex-column rz-align-items-center rz-p-12">
+            <RadzenProgressBar Mode="ProgressBarMode.Indeterminate" Style="width: 200px" />
+            <RadzenText TextStyle="TextStyle.Body1" class="rz-mt-4">Carregando dados da API...</RadzenText>
+        </div>
+    }
+    else if (alunos == null)
+    {
+        <RadzenAlert AlertStyle="AlertStyle.Info" Variant="Variant.Flat" Shade="Shade.Lighter">
+            Nenhum aluno encontrado ou erro na conexão com a API.
+        </RadzenAlert>
+    }
+    else
+    {
+        <RadzenDataGrid AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                        FilterMode="FilterMode.Advanced" AllowPaging="true" PageSize="10"
+                        AllowSorting="true" Data="@alunos" TItem="ResponseReadAlunoDto"
+                        ColumnWidth="200px" SelectionMode="DataGridSelectionMode.Single">
+            <Columns>
+                <RadzenDataGridColumn Property="@nameof(ResponseReadAlunoDto.Id)" Filterable="false" Title="ID" Frozen="true" Width="80px" TextAlign="TextAlign.Center" />
+                <RadzenDataGridColumn Property="@nameof(ResponseReadAlunoDto.Nome)" Title="Nome" Frozen="true" Width="160px" />
+                <RadzenDataGridColumn Property="@nameof(ResponseReadAlunoDto.Cpf)" Title="Cpf" Width="160px" />
+                <RadzenDataGridColumn Property="@nameof(ResponseReadAlunoDto.Email)" Title="Email" Width="200px" />
+                <RadzenDataGridColumn Property="@nameof(ResponseReadAlunoDto.Telefone)" Title="Telefone" Width="120px" />
+                <RadzenDataGridColumn Property="@nameof(ResponseReadAlunoDto.Sexo)" Title="Sexo" Width="70px" />
+                <RadzenDataGridColumn Property="@nameof(ResponseReadAlunoDto.StatusAluno)" Title="Status Aluno" FormatString="{0:d}" Width="160px" />
+                
+                <RadzenDataGridColumn Title="Ações" Sortable="false" Filterable="false" Width="120px" TextAlign="TextAlign.Center">
+                    <Template Context="aluno">
+                        <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Info" Variant="Variant.Flat" Size="ButtonSize.Small"
+                                      Click="@(() => Edit(aluno))" />
+                        <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Danger" Variant="Variant.Flat" Size="ButtonSize.Small"
+                                      class="rz-ml-2" Click="@(() => Delete(aluno.Id))" />
+                    </Template>
+                </RadzenDataGridColumn>
+            </Columns>
+        </RadzenDataGrid>
+    }
+</div>
+
+@code {
+    private ObservableCollection<ResponseReadAlunoDto> alunos = new();
+    private bool isLoading = true;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+
+        await GetAlunosList();
+    }
+
+    private async Task GetAlunosList()
+    {
+        try
+        {
+            isLoading = true;
+
+            var response = await service.GetAll();
+
+            alunos = response?.Data != null
+                ? new ObservableCollection<ResponseReadAlunoDto>(
+                    response.Data.OrderBy(a => a.Nome))
+                : new ObservableCollection<ResponseReadAlunoDto>();
+        }
+        catch (Exception ex)
+        {
+            NotificationService.Notify(
+                NotificationSeverity.Error,
+                "Erro",
+                "Não foi possível carregar a lista.");
+
+            Console.WriteLine(ex.Message);
+        }
+        finally
+        {
+            isLoading = false;
+            StateHasChanged();
+        }
+    }
+
+    public async Task NovoAluno()
+    {
+        var result = await DialogService.OpenAsync<AlunoForm>("Cadastrar Aluno",
+            options: new DialogOptions { Width = "700px", Resizable = true, Draggable = true });
+
+        if (result != null)
+        {
+            await GetAlunosList();
+        }
+    }
+
+    private async Task Edit(ResponseReadAlunoDto aluno)
+    {
+        var result = await DialogService.OpenAsync<AlunoEditForm>("Editar Aluno",
+            new Dictionary<string, object?> { { "AlunoExistente", aluno } },
+            new DialogOptions { Width = "700px" });
+
+        if (result is ResponseReadAlunoDto atualizado)
+        {
+            var item = alunos.FirstOrDefault(a => a.Id == atualizado.Id);
+            if (item != null)
+            {
+                var index = alunos.IndexOf(item);
+                alunos[index] = atualizado; // Atualização reativa do Grid
+            }
+        }
+    }
+
+    public async Task Delete(int alunoId)
+    {
+        var confirm = await DialogService.Confirm("Tem certeza que deseja excluir este aluno?", "Confirmar Exclusão",
+            new ConfirmOptions { OkButtonText = "Sim", CancelButtonText = "Não" });
+
+        if (confirm == true)
+        {
+            var success = await service.Delete(alunoId);
+            if (success)
+            {
+                var item = alunos.FirstOrDefault(a => a.Id == alunoId);
+                if (item != null) alunos.Remove(item);
+                
+                NotificationService.Notify(NotificationSeverity.Success, "Sucesso", "Aluno removido.");
+            }
+            else
+            {
+                NotificationService.Notify(NotificationSeverity.Error, "Erro", "Falha ao deletar.");
+            }
+        }
+    }
+}
