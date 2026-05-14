@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="ErrorMessages\**" />
+    <EmbeddedResource Remove="ErrorMessages\**" />
+    <None Remove="ErrorMessages\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Update="ResourceMessagesException.pt-BR.Designer.cs">
       <DependentUpon>ResourceMessagesException.pt-BR.resx</DependentUpon>
       <DesignTime>True</DesignTime>
@@ -28,10 +34,6 @@
       <LastGenOutput>ResourceMessagesException.Designer.cs</LastGenOutput>
       <Generator>PublicResXFileCodeGenerator</Generator>
     </EmbeddedResource>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="ErrorMessages\" />
   </ItemGroup>
 
 </Project>

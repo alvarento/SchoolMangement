@@ -7,7 +7,7 @@ using SchoolManagement.Domain.Interfaces.Repositories;
 
 namespace SchoolManagement.Application.UseCases.Alunos.Read
 {
-	internal class ReadAlunoUseCase(
+	public class ReadAlunoUseCase(
 		IAlunoRepository alunoRepository,
 		IMapper<Aluno, ResponseReadAlunoDto> mapper
 	) : IReadAlunoUseCase

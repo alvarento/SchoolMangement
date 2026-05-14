@@ -108,9 +108,6 @@ async Task ExecuteMigrations()
 
 void PrintLauchConsole(IConfiguration configuration)
 {
-	//builder.Logging.ClearProviders();
-	//builder.Logging.AddConsole();
-	//builder.Logging.AddFilter("Microsoft.Hosting.Lifetime", LogLevel.None);
 
 	var port = configuration.GetSection("ConfigLocalHost:Port").Value ?? "5001";
 

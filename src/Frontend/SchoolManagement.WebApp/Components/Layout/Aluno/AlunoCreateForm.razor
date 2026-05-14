@@ -1,0 +1,146 @@
+﻿@using SchoolManagement.Communication.ResponsesDto
+@using SchoolManagement.Communication.RequestsDto
+@using SchoolManagement.Domain.Entities
+@using SchoolManagement.WebApp.Services
+@using SchoolManagement.WebApp.Services.AlunoService
+@using SchoolManagement.WebApp.Utils
+@inject NotificationService NotificationService
+
+@inject IJSRuntime JS
+
+@inject IAlunoService service
+@inject DialogService DialogService
+
+<RadzenTemplateForm Data="@aluno" Style="width: 100%" TItem="RequestCreateAlunoDto" Submit ="@Save">
+	<ChildContent Context="formContext">
+		<DataAnnotationsValidator />
+
+		<div class="p-2">
+			<RadzenFormField Text="Nome" Variant="Variant.Outlined" Style="width:100%">
+				<RadzenTextBox 
+					Name="Nome" 
+					MaxLength="50" 
+					@bind-Value="@aluno.Nome"
+							   onkeypress="return /^[a-zA-ZÀ-ÿ ]+$/.test(event.key)" />
+			</RadzenFormField>
+			<ValidationMessage For="@(() => aluno.Nome)" />
+		</div>
+
+		<div class="p-2">
+			<RadzenFormField Text="CPF" Variant="Variant.Outlined" Style="width:100%">
+				<RadzenTextBox 
+					Name="Cpf" 
+					MaxLength="14" 
+					@bind-Value="@aluno.Cpf"
+					@oninput="@(e => aluno.Cpf = StringUtils.AplicarMascaraCpfInput(e.Value?.ToString()))"
+					onkeypress="return event.charCode >= 48 && event.charCode <= 57"/>
+			</RadzenFormField>
+			<ValidationMessage For="@(() => aluno.Cpf)" />
+		</div>
+	
+
+		<div class="p-2">
+			<RadzenFormField Text="Sexo" Variant="Variant.Outlined" Style="width:100%">
+			<RadzenDropDown @bind-Value="aluno.Sexo"
+							Data="@opcoesSexo"
+							TextProperty="Descricao"
+							ValueProperty="Codigo"
+							Style="width: 100%;"
+							Name="Sexo" />
+			</RadzenFormField>
+			<ValidationMessage For="@(() => aluno.Sexo)" />
+		</div>
+
+		<div class="p-2">
+			<RadzenFormField Text="Telefone" Variant="Variant.Outlined"Style="width:100%">
+				<RadzenTextBox 
+					Name="Telefone" 
+					MaxLength="15" 
+					@bind-Value="@aluno.Telefone"
+					@oninput="@(e => aluno.Telefone = StringUtils.AplicarMascaraTelefoneInput(e.Value?.ToString()))"
+					onkeypress="return event.charCode >= 48 && event.charCode <= 57" />
+			</RadzenFormField>
+			<ValidationMessage For="@(() => aluno.Telefone)" />
+		</div>
+
+		<div class="p-2">
+			<RadzenFormField Text="Email" Variant="Variant.Outlined" Style="width:100%">
+				<RadzenTextBox Name="Email" MaxLength="100" @bind-Value="@aluno.Email" />
+			</RadzenFormField>
+			<ValidationMessage For="@(() => aluno.Email)" />
+		</div>
+
+		<div class="p-2">
+			<RadzenFormField Text="Data de Nascimento" Variant="Variant.Outlined" Style="width:100%">
+			<RadzenDatePicker @bind-Value="aluno.DataNascimento"
+							  Name="DataNascimento"
+							  DateFormat="dd/MM/yyyy"
+								AllowTextInput="true"
+							  TValue="DateTime?"
+							  Style="width: 100%;"/>
+			</RadzenFormField>
+			<ValidationMessage For="@(() => aluno.DataNascimento)" />
+		</div>
+
+		<div class="p-2">
+			<RadzenButton Text="Salvar" ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Primary"/>
+			<RadzenButton Text="Cancelar" ButtonType="ButtonType.Button" Click="@(() => DialogService.Close(false))" ButtonStyle="ButtonStyle.Secondary" />
+		</div>
+	</ChildContent>
+</RadzenTemplateForm>
+
+@code {
+	private RequestCreateAlunoDto aluno = new();
+
+	// Lista de opções para o Select de Sexo
+	List<dynamic> opcoesSexo = new List<dynamic>()
+	{
+		new { Codigo = "M", Descricao = "Masculino" },
+		new { Codigo = "F", Descricao = "Feminino" }
+	};
+
+	private async Task Save(RequestCreateAlunoDto args)
+	{
+		try
+		{
+
+			args.Cpf = StringUtils.LimparCpf(args.Cpf);
+			args.Telefone = StringUtils.LimparTelefone(args.Telefone);
+			// O service.Create agora retorna um bool (conforme configuramos antes)
+			var sucesso = await service.Create(args);
+
+			if (sucesso)
+			{
+				NotificationService.Notify(new NotificationMessage
+				{
+					Severity = NotificationSeverity.Success,
+					Summary = "Sucesso",
+					Detail = "Aluno salvo com sucesso!"
+				});
+
+				DialogService.Close(true);
+
+				StateHasChanged();
+			}
+			else
+			{
+				NotificationService.Notify(new NotificationMessage
+				{
+					Severity = NotificationSeverity.Error,
+					Summary = "Erro",
+					Detail = "Não foi possível salvar os dados."
+				});
+			}
+		}
+		catch (Exception ex)
+		{
+			NotificationService.Notify(new NotificationMessage
+			{
+				Severity = NotificationSeverity.Error,
+				Summary = "Erro Crítico",
+				Detail = ex.Message
+			});
+		}
+	}
+
+}

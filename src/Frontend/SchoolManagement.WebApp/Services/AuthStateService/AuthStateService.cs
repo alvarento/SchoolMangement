@@ -72,38 +72,58 @@ namespace SchoolManagement.WebApp.Services.AuthStateService
             NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(CurrentUser)));
         }
 
-        // ... Mantenha os métodos ParseClaimsFromJwt e ParseBase64WithoutPadding como estão ...
+		public Guid? GetUserId()
+		{
+			// Procuramos especificamente pela claim 'sid' que você definiu no backend
+			// O .NET mapeia ClaimTypes.Sid para a string "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/sid"
+			// ou apenas "sid" dependendo do parser.
+			var claim = CurrentUser.FindFirst(ClaimTypes.Sid) ??
+						CurrentUser.FindFirst("sid");
 
-        public override Task<AuthenticationState> GetAuthenticationStateAsync() => Task.FromResult(new AuthenticationState(CurrentUser));
+			if (claim != null && Guid.TryParse(claim.Value, out var guidId))
+			{
+				return guidId;
+			}
+
+			return null;
+		}
+
+		// ... Mantenha os métodos ParseClaimsFromJwt e ParseBase64WithoutPadding como estão ...
+
+		public override Task<AuthenticationState> GetAuthenticationStateAsync() => Task.FromResult(new AuthenticationState(CurrentUser));
         public Task<string?> GetTokenAsync() => Task.FromResult(_tokenProvider.Token);
 
 
-        private IEnumerable<Claim> ParseClaimsFromJwt(string jwt)
-        {
-            var claims = new List<Claim>();
+		private IEnumerable<Claim> ParseClaimsFromJwt(string jwt)
+		{
+			var claims = new List<Claim>();
+			var payload = jwt.Split('.')[1];
+			var jsonBytes = ParseBase64WithoutPadding(payload);
+			var keyValuePairs = JsonSerializer.Deserialize<Dictionary<string, object>>(jsonBytes);
 
-            // Pega apenas a parte central do Token (o Payload)
-            var payload = jwt.Split('.')[1];
+			if (keyValuePairs is null) return claims;
 
-            // Converte de Base64 para Bytes
-            var jsonBytes = ParseBase64WithoutPadding(payload);
+			foreach (var kvp in keyValuePairs)
+			{
+				var key = kvp.Key;
+				var value = kvp.Value?.ToString() ?? "";
 
-            // Transforma em um dicionário (Chave e Valor)
-            var keyValuePairs = JsonSerializer.Deserialize<Dictionary<string, object>>(jsonBytes);
+				// DICA: O JwtSecurityTokenHandler do Backend costuma abreviar nomes longos.
+				// Se no JSON vier "sid", mapeamos para o tipo oficial do .NET para facilitar o FindFirst(ClaimTypes.Sid)
+				if (key == "sid")
+				{
+					claims.Add(new Claim(ClaimTypes.Sid, value));
+				}
+				else
+				{
+					claims.Add(new Claim(key, value));
+				}
+			}
 
-            if (keyValuePairs is null)
-                return claims;
+			return claims;
+		}
 
-            // Transforma cada item do dicionário em uma Claim do C#
-            foreach (var kvp in keyValuePairs)
-            {
-                claims.Add(new Claim(kvp.Key, kvp.Value?.ToString() ?? ""));
-            }
-
-            return claims;
-        }
-
-        private byte[] ParseBase64WithoutPadding(string base64)
+		private byte[] ParseBase64WithoutPadding(string base64)
         {
             switch (base64.Length % 4)
             {

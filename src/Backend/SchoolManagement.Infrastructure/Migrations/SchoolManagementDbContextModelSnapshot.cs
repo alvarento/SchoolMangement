@@ -19,36 +19,6 @@ namespace SchoolManagement.Infrastructure.Migrations
                 .HasAnnotation("ProductVersion", "10.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("ProfessorDisciplinas", b =>
-                {
-                    b.Property<int>("ProfessorId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("DisciplinaId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ProfessorId", "DisciplinaId");
-
-                    b.HasIndex("DisciplinaId");
-
-                    b.ToTable("ProfessorDisciplinas");
-                });
-
-            modelBuilder.Entity("ProfessorTurmas", b =>
-                {
-                    b.Property<int>("ProfessorId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TurmaId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ProfessorId", "TurmaId");
-
-                    b.HasIndex("TurmaId");
-
-                    b.ToTable("ProfessorTurmas");
-                });
-
             modelBuilder.Entity("SchoolManagement.Domain.Entities.Boletim", b =>
                 {
                     b.Property<int>("Id")
@@ -90,10 +60,15 @@ namespace SchoolManagement.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
 
+                    b.Property<int?>("ProfessorId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Nome")
                         .IsUnique();
+
+                    b.HasIndex("ProfessorId");
 
                     b.ToTable("Disciplinas", (string)null);
                 });
@@ -210,6 +185,9 @@ namespace SchoolManagement.Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)");
 
+                    b.Property<int?>("ProfessorId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Turno")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -219,13 +197,14 @@ namespace SchoolManagement.Infrastructure.Migrations
                     b.HasIndex("Codigo")
                         .IsUnique();
 
+                    b.HasIndex("ProfessorId");
+
                     b.ToTable("Turmas", (string)null);
                 });
 
             modelBuilder.Entity("SchoolManagement.Domain.Entities.Usuario", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
                     b.Property<bool>("IsAdmin")
@@ -287,9 +266,6 @@ namespace SchoolManagement.Infrastructure.Migrations
                     b.Property<int>("CargaHorariaSemanal")
                         .HasColumnType("int");
 
-                    b.Property<int>("RegistroFuncional")
-                        .HasColumnType("int");
-
                     b.Property<string>("Titulacao")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -298,36 +274,6 @@ namespace SchoolManagement.Infrastructure.Migrations
                         .HasColumnType("decimal(10,2)");
 
                     b.ToTable("Professores", (string)null);
-                });
-
-            modelBuilder.Entity("ProfessorDisciplinas", b =>
-                {
-                    b.HasOne("SchoolManagement.Domain.Entities.Disciplina", null)
-                        .WithMany()
-                        .HasForeignKey("DisciplinaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("SchoolManagement.Domain.Entities.Professor", null)
-                        .WithMany()
-                        .HasForeignKey("ProfessorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("ProfessorTurmas", b =>
-                {
-                    b.HasOne("SchoolManagement.Domain.Entities.Professor", null)
-                        .WithMany()
-                        .HasForeignKey("ProfessorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("SchoolManagement.Domain.Entities.Turma", null)
-                        .WithMany()
-                        .HasForeignKey("TurmaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("SchoolManagement.Domain.Entities.Boletim", b =>
@@ -339,6 +285,13 @@ namespace SchoolManagement.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Matricula");
+                });
+
+            modelBuilder.Entity("SchoolManagement.Domain.Entities.Disciplina", b =>
+                {
+                    b.HasOne("SchoolManagement.Domain.Entities.Professor", null)
+                        .WithMany("Disciplinas")
+                        .HasForeignKey("ProfessorId");
                 });
 
             modelBuilder.Entity("SchoolManagement.Domain.Entities.Matricula", b =>
@@ -496,6 +449,13 @@ namespace SchoolManagement.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("SchoolManagement.Domain.Entities.Turma", b =>
+                {
+                    b.HasOne("SchoolManagement.Domain.Entities.Professor", null)
+                        .WithMany("Turmas")
+                        .HasForeignKey("ProfessorId");
+                });
+
             modelBuilder.Entity("SchoolManagement.Domain.Entities.Usuario", b =>
                 {
                     b.OwnsOne("SchoolManagement.Domain.ValueObjects.Email", "Email", b1 =>
@@ -588,6 +548,13 @@ namespace SchoolManagement.Infrastructure.Migrations
             modelBuilder.Entity("SchoolManagement.Domain.Entities.Turma", b =>
                 {
                     b.Navigation("Alunos");
+                });
+
+            modelBuilder.Entity("SchoolManagement.Domain.Entities.Professor", b =>
+                {
+                    b.Navigation("Disciplinas");
+
+                    b.Navigation("Turmas");
                 });
 #pragma warning restore 612, 618
         }

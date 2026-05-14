@@ -4,6 +4,7 @@ using SchoolManagement.Application.UseCases.Professores.Create;
 using SchoolManagement.Application.UseCases.Professores.Delete;
 using SchoolManagement.Application.UseCases.Professores.Read;
 using SchoolManagement.Application.UseCases.Professores.ReadAll;
+using SchoolManagement.Application.UseCases.Professores.ReadTotal;
 using SchoolManagement.Application.UseCases.Professores.Update;
 using SchoolManagement.Communication.RequestsDto;
 using SchoolManagement.Communication.ResponsesDto;
@@ -59,6 +60,19 @@ namespace SchoolManagement.API.Controllers
 				return NotFound(new ResponseErrorDto("Professor não encontrado"));
 
 			return Ok(aluno);
+
+		}
+
+		[HttpGet]
+		[Route("count")]
+		[ProducesResponseType(typeof(ResponseReadProfessorDto), StatusCodes.Status200OK)]
+		[ProducesResponseType(typeof(ResponseErrorDto), StatusCodes.Status404NotFound)]
+		public async Task<IActionResult> GetTotal(
+	[FromServices] IReadTotalProfessoresUseCase useCase
+)
+		{
+			int total = await useCase.Execute();
+			return Ok(total);
 
 		}
 

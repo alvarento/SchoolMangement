@@ -7,7 +7,6 @@
     <Project Path="src/Backend/SchoolManagement.Infrastructure/SchoolManagement.Infrastructure.csproj" Id="247c7590-69db-4390-a0d6-a25fafe2159f" />
   </Folder>
   <Folder Name="/src/FrontEnd/">
-    <Project Path="src/Frontend/SchoolManagement.SPA/SchoolManagement.SPA.csproj" Id="6fd64dc9-ff01-4aab-8a62-e232cd12f283" />
     <Project Path="src/Frontend/SchoolManagement.WebApp/SchoolManagement.WebApp.csproj" />
   </Folder>
   <Folder Name="/src/Shared/">

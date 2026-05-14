@@ -9,6 +9,7 @@ using SchoolManagement.Domain.Interfaces.Repositories;
 namespace SchoolManagement.Application.UseCases.Professores.Update
 {
 	public class UpdateProfessorUseCase(
+		IPessoaRepository pessoasRepository,
 		IProfessorRepository professorRepository,
 		IUnitOfWork unitOfWork,
 		IValidationErrorMessages validationErrorMessages,
@@ -16,6 +17,7 @@ namespace SchoolManagement.Application.UseCases.Professores.Update
 	) : IUpdateProfessorUseCase
 	{
 
+		private readonly IPessoaRepository _pessoaRepository = pessoasRepository;
 		private readonly IProfessorRepository _professorRepository = professorRepository;
 		private readonly IUnitOfWork _unitOfWork = unitOfWork;
 		private readonly IValidationErrorMessages _validationErrorMessages = validationErrorMessages;
@@ -46,7 +48,8 @@ namespace SchoolManagement.Application.UseCases.Professores.Update
 			if (request.Email != null)
 			{
 				var professorWithEmal = await _professorRepository.GetProfessorByEmail(request.Email);
-				if (professorWithEmal != null && professorWithEmal.Id != professorId)
+				bool emailExists = await _pessoaRepository.ExistsEmail(request.Email);
+				if (emailExists && professorWithEmal.Id != professorId)
 					_validationErrorMessages.AddError(result, ResourceMessagesException.EMAIL_ALREADY_REGISTERED);
 			}
 

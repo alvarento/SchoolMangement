@@ -225,4 +225,7 @@
   <data name="EMAIL_OR_PASSWORD_INCORRECT" xml:space="preserve">
     <value>Incorrect email or password</value>
   </data>
+  <data name="USER_NOT_FOUND" xml:space="preserve">
+    <value>User not found</value>
+  </data>
 </root>

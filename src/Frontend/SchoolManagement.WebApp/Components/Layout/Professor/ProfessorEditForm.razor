@@ -1,0 +1,116 @@
+﻿@using SchoolManagement.Communication.RequestsDto
+@using SchoolManagement.Communication.ResponsesDto
+@using SchoolManagement.WebApp.Services.ProfessorService
+@using SchoolManagement.WebApp.Utils
+@inject IProfessorService service
+@inject DialogService DialogService
+@inject NotificationService NotificationService
+
+<RadzenTemplateForm Data="@professor" Style="width: 100%" TItem="RequestUpdateProfessorDto" Submit="@Save">
+	<ChildContent Context="formContext">
+		<DataAnnotationsValidator />
+
+		<div class="p-2">
+			<RadzenFormField Text="Nome" Variant="Variant.Outlined" Style="width:100%">
+				<RadzenTextBox Name="Nome"
+							   MaxLength="50"
+							   @bind-Value="@professor.Nome"
+							   onkeypress="return /^[a-zA-ZÀ-ÿ ]+$/.test(event.key)" />
+			</RadzenFormField>
+			<ValidationMessage For="@(() => professor.Nome)" />
+		</div>
+
+		<div class="p-2" ">
+			<RadzenFormField Text="Telefone" Variant="Variant.Outlined" Style="width:100%">
+				<RadzenTextBox Name="Telefone"
+							   MaxLength="15"
+							   @bind-Value="@professor.Telefone"
+							   @oninput="@(e => professor.Telefone = StringUtils.AplicarMascaraTelefoneInput(e.Value?.ToString()))"
+							   onkeypress="return event.charCode >= 48 && event.charCode <= 57" />
+			</RadzenFormField>
+			<ValidationMessage For="@(() => professor.Telefone)" />
+		</div>
+
+		<div class="p-2" ">
+			<RadzenFormField Text="Email" Variant="Variant.Outlined" Style="width:100%">
+				<RadzenTextBox Name="Email" MaxLength="100" @bind-Value="@professor.Email" />
+			</RadzenFormField>
+			<ValidationMessage For="@(() => professor.Email)" />
+		</div>
+
+		<div class="row">
+			<div class="p-2" ">
+				<RadzenFormField Text="Carga Horária Semanal" Variant="Variant.Outlined" Style="width:100%">
+					<RadzenNumeric Name="CargaHoraria" @bind-Value="@professor.CargaHorariaSemanal" Min="10" Max="40" />
+				</RadzenFormField>
+				<ValidationMessage For="@(() => professor.CargaHorariaSemanal)" />
+			</div>
+
+			<div class="p-2" ">
+				<RadzenFormField Text="Valor da Hora" Variant="Variant.Outlined" Style="width:100%">
+					<RadzenNumeric Name="ValorHora" @bind-Value="@professor.ValorHora" Format="c" />
+				</RadzenFormField>
+				<ValidationMessage For="@(() => professor.ValorHora)" />
+			</div>
+		</div>
+
+		<div class="p-2">
+			<RadzenButton Text="Salvar Alterações" ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Primary" />
+			<RadzenButton Text="Cancelar" ButtonType="ButtonType.Button" Click="@(() => DialogService.Close(false))" ButtonStyle="ButtonStyle.Secondary" class="rz-ml-2" />
+		</div>
+	</ChildContent>
+</RadzenTemplateForm>
+
+@code {
+	private RequestUpdateProfessorDto professor = new();
+
+	[Parameter] public ResponseReadProfessorDto ProfessorExistente { get; set; }
+
+	protected override void OnInitialized()
+	{
+		// Preenche o DTO de update com os dados atuais vindos da API (Grid)
+		if (ProfessorExistente != null)
+		{
+			professor = new RequestUpdateProfessorDto
+			{
+				Nome = ProfessorExistente.Nome,
+				Email = ProfessorExistente.Email,
+				Telefone = ProfessorExistente.Telefone,
+				// Como os valores no Response chegam formatados como string (ex: "40h", "R$ 50,00"),
+				// certifique-se de que seu DTO de Update aceite os tipos corretos ou faça o parse aqui.
+				// Abaixo assumo que seu DTO de Update usa int e decimal.
+				CargaHorariaSemanal = int.TryParse(StringUtils.SomenteNumeros(ProfessorExistente.CargaHorariaSemanal), out var ch) ? ch : 0,
+				ValorHora = decimal.TryParse(StringUtils.SomenteNumeros(ProfessorExistente.Salario), out var vh) ? vh : 0 // Exemplo de parse se necessário
+			};
+		}
+	}
+
+	private async Task Save(RequestUpdateProfessorDto args)
+	{
+		// Limpa máscaras antes de enviar
+		args.Telefone = StringUtils.LimparTelefone(args.Telefone);
+
+		var sucesso = await service.Update(ProfessorExistente.Id, args);
+
+		if (sucesso)
+		{
+			NotificationService.Notify(new NotificationMessage
+			{
+				Severity = NotificationSeverity.Success,
+				Summary = "Sucesso",
+				Detail = "Dados do professor atualizados!"
+			});
+
+			DialogService.Close(true);
+		}
+		else
+		{
+			NotificationService.Notify(new NotificationMessage
+			{
+				Severity = NotificationSeverity.Error,
+				Summary = "Erro",
+				Detail = "Falha ao atualizar professor."
+			});
+		}
+	}
+}

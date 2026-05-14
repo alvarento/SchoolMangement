@@ -6,6 +6,8 @@ namespace SchoolManagement.WebApp.Services.AuthStateService
 	{
 		Task<string?> GetTokenAsync();
 
+		public Guid? GetUserId();
+
 		Task InitializeAsync();
 
 		Task LoginAsync(string token);

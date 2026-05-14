@@ -1,7 +1,11 @@
 ﻿@inherits LayoutComponentBase
 
+@using SchoolManagement.Communication.ResponsesDto
 @using Microsoft.AspNetCore.Components.Authorization
 @using SchoolManagement.WebApp.Services.AuthStateService
+@using SchoolManagement.WebApp.Services.UsuarioService
+@inject IAuthStateService AuthState
+@inject IUsuarioService UsuarioService
 
 <RadzenComponents />
 
@@ -21,7 +25,7 @@
                 <RadzenSidebarToggle Click="@(() => sidebarExpanded = !sidebarExpanded)" />
 
                 <RadzenText TextStyle="TextStyle.H6"
-                            Class="rz-m-0">
+                            Class="rz-m-0 text-light">
 
                     School Management
 
@@ -38,10 +42,10 @@
                                  Gap="1rem">
 
                         <RadzenText TextStyle="TextStyle.Body2"
-                                    Class="rz-m-0">
+                                    Class="rz-m-0 text-light">
 
                             Olá,
-                            <b>@context.User.Identity?.Name</b>
+                            <b>@(_usuarioNome)</b>
 
                         </RadzenText>
 
@@ -93,6 +97,7 @@
 @code {
 
     private bool sidebarExpanded = true;
+    private string _usuarioNome = "";
 
     [Inject]
     private IAuthStateService AuthStateService { get; set; } = default!;
@@ -100,10 +105,25 @@
     [Inject]
     private NavigationManager Navigation { get; set; } = default!;
 
+    protected override async Task OnInitializedAsync()
+    {
+        Guid? userId = AuthState.GetUserId();
+
+        if (userId.HasValue && userId != null)
+        {
+            // Agora você envia esse Guid para o seu AlunoService ou UsuarioService
+            // para buscar o resto das informações no banco de dados.
+            var usuario = await UsuarioService.GetById(userId.Value);
+            if (usuario != null) _usuarioNome = usuario.Nome.Split(" ")[0];
+        }
+    }
+
     private async Task Logout()
     {
         await AuthStateService.LogoutAsync();
 
         Navigation.NavigateTo("/login", true);
     }
+
+
 }

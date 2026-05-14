@@ -1,0 +1,89 @@
+﻿@using SchoolManagement.Communication.RequestsDto
+@using SchoolManagement.Communication.ResponsesDto
+@using SchoolManagement.WebApp.Services.AlunoService
+@using SchoolManagement.WebApp.Utils
+@inject IAlunoService service
+@inject DialogService DialogService
+@inject NotificationService NotificationService
+
+<RadzenTemplateForm Data="@aluno" Style="width: 100%" TItem="RequestUpdateAlunoDto" Submit="@Save">
+    <ChildContent Context="formContext">
+        <DataAnnotationsValidator />
+        <div class="p-2">
+            <RadzenFormField Text="Nome" Variant="Variant.Outlined" Style="width:100%">
+                <RadzenTextBox Name="Nome"
+                               MaxLength="50"
+                               @bind-Value="@aluno.Nome"
+                               onkeypress="return /^[a-zA-ZÀ-ÿ ]+$/.test(event.key)" />
+            </RadzenFormField>
+            <ValidationMessage For="@(() => aluno.Nome)" />
+        </div>
+
+        <div class="p-2">
+            <RadzenFormField Text="Telefone" Variant="Variant.Outlined" Style="width:100%">
+                <RadzenTextBox Name="Telefone"
+                               MaxLength="15"
+                               @bind-Value="@aluno.Telefone"
+                               @oninput="@(e => aluno.Telefone = StringUtils.AplicarMascaraTelefoneInput(e.Value?.ToString()))"
+                               onkeypress="return event.charCode >= 48 && event.charCode <= 57" />
+            </RadzenFormField>
+            <ValidationMessage For="@(() => aluno.Telefone)" />
+        </div>
+
+        <div class="p-2">
+            <RadzenFormField Text="Email" Variant="Variant.Outlined" Style="width:100%">
+                <RadzenTextBox Name="Email" MaxLength="100" @bind-Value="@aluno.Email" />
+            </RadzenFormField>
+            <ValidationMessage For="@(() => aluno.Email)" />
+        </div>
+
+        <div class="p-2">
+            <RadzenButton Text="Salvar" ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Primary" />
+            <RadzenButton Text="Cancelar" ButtonType="ButtonType.Button" Click="@(() => DialogService.Close(false))" ButtonStyle="ButtonStyle.Secondary" />
+        </div>
+    </ChildContent>
+</RadzenTemplateForm>
+
+@code {
+    private RequestUpdateAlunoDto aluno = new();
+
+
+    [Parameter] public ResponseReadAlunoDto AlunoExistente { get; set; }
+
+    protected override void OnInitialized()
+    {
+        // Preenche o formulário com os dados existentes
+        aluno = new RequestUpdateAlunoDto
+        {
+            Nome = AlunoExistente.Nome,
+            Email = AlunoExistente.Email,
+            Telefone = AlunoExistente.Telefone
+        };
+    }
+
+    private async Task Save(RequestUpdateAlunoDto args)
+    {
+        var sucesso = await service.Update(AlunoExistente.Id, args);
+
+        if (sucesso)
+        {
+            NotificationService.Notify(new NotificationMessage
+            {
+                Severity = NotificationSeverity.Success,
+                Summary = "Sucesso",
+                Detail = "Aluno atualizado com sucesso!"
+            });
+
+            DialogService.Close(true);
+        }
+        else
+        {
+            NotificationService.Notify(new NotificationMessage
+            {
+                Severity = NotificationSeverity.Error,
+                Summary = "Erro",
+                Detail = "Não foi possível atualizar os dados."
+            });
+        }
+    }
+}

@@ -5,9 +5,6 @@ namespace SchoolManagement.Domain.Interfaces.Repositories
 	public interface IProfessorRepository
 	{
 		public Task Add(Professor prof);
-		public Task<bool> ExistActiveProfessorWithEmail(string email);
-
-		public Task<bool> ExistActiveProfessorWithCpf(string cpf);
 
 		public Task<Professor?> GetProfessorById(int id);
 

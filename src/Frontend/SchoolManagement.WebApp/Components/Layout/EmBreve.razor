@@ -1,0 +1,58 @@
+﻿<div class="coming-soon-container">
+    <RadzenCard Variant="Variant.Flat" Class="coming-soon-card rz-shadow-10 rz-border-radius-4">
+        <RadzenStack AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center" Gap="2rem" Class="rz-p-12">
+            
+            @* Ícone com Animação de Pulsação *@
+            <div class="icon-wrapper">
+                <RadzenIcon Icon="construction" Style="font-size: 8rem; color: var(--rz-primary);" />
+            </div>
+
+            <RadzenStack AlignItems="AlignItems.Center" Gap="0.5rem">
+                <RadzenText TextStyle="TextStyle.H2" TagName="TagName.H1" Class="rz-color-primary rz-text-align-center">
+                    <b>Em breve!</b>
+                </RadzenText>
+                <RadzenText TextStyle="TextStyle.H5" Class="rz-color-text-secondary rz-text-align-center">
+                    Estamos trabalhando duro para finalizar esta funcionalidade.
+                </RadzenText>
+            </RadzenStack>
+
+            @* Barra de progresso indeterminada para dar ideia de movimento *@
+            <RadzenProgressBar Mode="ProgressBarMode.Indeterminate" Style="width: 300px; height: 8px;" />
+
+            <RadzenButton Text="Voltar para o Início" 
+                          Icon="home" 
+                          ButtonStyle="ButtonStyle.Secondary" 
+                          Variant="Variant.Flat" 
+                          Click="@(() => NavigationManager.NavigateTo("/"))" />
+        </RadzenStack>
+    </RadzenCard>
+</div>
+
+@inject NavigationManager NavigationManager
+
+<style>
+    .coming-soon-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 80vh;
+        width: 100%;
+        background-color: var(--rz-base-background-color);
+    }
+
+    .coming-soon-card {
+        max-width: 800px;
+        width: 90%;
+        border-top: 6px solid var(--rz-primary);
+    }
+
+    .icon-wrapper {
+        animation: pulse 2s infinite ease-in-out;
+    }
+
+    @@keyframes pulse {
+        0% { transform: scale(1); opacity: 0.8; }
+        50% { transform: scale(1.1); opacity: 1; }
+        100% { transform: scale(1); opacity: 0.8; }
+    }
+</style>

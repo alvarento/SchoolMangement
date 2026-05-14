@@ -4,8 +4,10 @@ using SchoolManagement.Communication.Utils.Logs;
 using SchoolManagement.WebApp.Components;
 using SchoolManagement.WebApp.Handler.AuthHandler;
 using SchoolManagement.WebApp.Services.AlunoService;
+using SchoolManagement.WebApp.Services.ProfessorService;
 using SchoolManagement.WebApp.Services.AuthStateService;
 using SchoolManagement.WebApp.Services.LoginService;
+using SchoolManagement.WebApp.Services.UsuarioService;
 
 Console.OutputEncoding = System.Text.Encoding.UTF8;
 
@@ -57,6 +59,12 @@ builder.Services.AddHttpClient<ILoginService, LoginService>(
 builder.Services.AddTransient<AuthHandler>();
 builder.Services.AddHttpClient<IAlunoService, AlunoService>(client => client.BaseAddress = baseUrl)
     .AddHttpMessageHandler<AuthHandler>();
+
+builder.Services.AddHttpClient<IProfessorService, ProfessorService>(client => client.BaseAddress = baseUrl)
+	.AddHttpMessageHandler<AuthHandler>();
+
+builder.Services.AddHttpClient<IUsuarioService, UsuarioService>(client => client.BaseAddress = baseUrl)
+	.AddHttpMessageHandler<AuthHandler>();
 
 builder.Services.AddScoped<ITokenProvider, TokenProvider>();
 builder.Services.AddScoped<IAuthStateService, AuthStateService>();

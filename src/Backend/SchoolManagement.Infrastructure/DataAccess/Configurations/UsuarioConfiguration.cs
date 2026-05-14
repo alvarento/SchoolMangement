@@ -12,6 +12,10 @@ public class UsuarioConfiguration : IEntityTypeConfiguration<Usuario>
 
 		builder.HasKey(p => p.Id);
 
+		builder.Property(p => p.Id)
+		.ValueGeneratedNever()
+		.HasColumnType("char(36)");
+
 		builder.OwnsOne(p => p.Nome, nome =>
 		{
 			nome.Property(n => n.Valor)

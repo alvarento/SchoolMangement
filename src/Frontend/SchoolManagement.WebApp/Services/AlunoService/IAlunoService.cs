@@ -7,6 +7,8 @@ namespace SchoolManagement.WebApp.Services.AlunoService
     {
         public Task<PagedResponse<ResponseReadAlunoDto>> GetAll();
 
+        public Task<int?> GetTotal();
+
         public Task<bool> Delete(int id);
 
         public Task<bool> Create(RequestCreateAlunoDto aluno);

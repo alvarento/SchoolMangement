@@ -64,6 +64,7 @@ public class PessoaConfiguration : IEntityTypeConfiguration<Pessoa>
 				.IsRequired();
 		});
 
+
 		builder.Property(p => p.Sexo)
 			.HasColumnName("Sexo")
 			.HasColumnType("char(1)")

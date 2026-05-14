@@ -18,8 +18,6 @@ namespace SchoolManagement.Domain.Entities
 
 
 
-		public int RegistroFuncional { get; private set; }
-
 		public int CargaHorariaSemanal { get; set; }
 
 		public decimal ValorHora { get; set; }
@@ -47,7 +45,7 @@ namespace SchoolManagement.Domain.Entities
 			Role = Role.Professor;
 		}
 
-		protected Professor() { }
+		protected Professor() : base() { }
 
 		public void AdicionarDisciplina(Disciplina disciplina)
 		{

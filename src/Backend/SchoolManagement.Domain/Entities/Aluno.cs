@@ -31,22 +31,7 @@ namespace SchoolManagement.Domain.Entities
 			Role = Role.Aluno;
 		}
 
-		protected Aluno() { }
-
-
-		//public static Aluno Create(
-		//	string nome,
-		//	string cpf,
-		//	string sexo,
-		//	string fone,
-		//	string email,
-		//	string dataNascimento)
-		//{
-		//	return new Aluno(
-				
-
-		//	);
-		//}
+		protected Aluno() : base() { }
 
 
 

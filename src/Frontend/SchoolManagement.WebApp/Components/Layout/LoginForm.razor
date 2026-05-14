@@ -49,23 +49,20 @@
                                      Text="Senha é obrigatória" />
         </div>
 
-        <div class="rz-display-flex rz-justify-content-end rz-gap-4 rz-m-4">
+        <div class="rz-display-flex flex-column rz-gap-4 rz-m-4 m-4">
 
             <RadzenButton Text="Entrar"
                           ButtonType="ButtonType.Submit"
-                          ButtonStyle="ButtonStyle.Primary" />
+                          ButtonStyle="ButtonStyle.Primary"
+                          Style="width: 100%"
+                          />
 
-            <div class="rz-text-align-center rz-mt-4">
-
-                <RadzenText TextStyle="TextStyle.Caption">
-                    Não tem uma conta?
+            <RadzenStack AlignItems="AlignItems.Center" class="p-3">
+                <RadzenText TextStyle="TextStyle.Body2">
+                    Novo por aqui?
+                    <RadzenLink Path="register" Text="Crie uma conta" Style="font-weight: bold" />
                 </RadzenText>
-
-                <RadzenButton Text="Cadastre-se aqui"
-                              Variant="Variant.Text"
-                              ButtonStyle="ButtonStyle.Primary"
-                              Click="@(() => Navigation.NavigateTo("/register"))" />
-            </div>
+            </RadzenStack>
 
         </div>
 

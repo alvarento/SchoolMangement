@@ -2,13 +2,10 @@
 {
 	public class ResponseReadProfessorDto : ResponseReadPessoaDto
 	{
-		//public string Nome { get; set; } = string.Empty;
-		//public string Cpf { get; set; } = string.Empty;
+		public string CargaHorariaSemanal { get; set; } = string.Empty;
+		public string TitulacaoProfessor { get; set; } = string.Empty;
 
-		//public string Sexo { get; set; } = string.Empty;
-		//public string Telefone { get; set; } = string.Empty;
-		//public string Email { get; set; } = string.Empty;
+		public string Salario { get; set; } = string.Empty;
 
-		//public string DataNascimento { get; set; } = string.Empty;
 	}
 }

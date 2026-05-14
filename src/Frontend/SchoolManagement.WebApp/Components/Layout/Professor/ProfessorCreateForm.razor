@@ -1,0 +1,131 @@
+﻿@using SchoolManagement.Communication.RequestsDto
+@using SchoolManagement.WebApp.Services.ProfessorService
+@using SchoolManagement.WebApp.Utils
+@inject IProfessorService service
+@inject DialogService DialogService
+@inject NotificationService NotificationService
+
+<RadzenTemplateForm Data="@professor" Style="width: 100%" TItem="RequestCreateProfessorDto" Submit="@Save">
+    <ChildContent Context="formContext">
+        <DataAnnotationsValidator />
+        
+		<div class="p-2">
+			<RadzenFormField Text="Nome" Variant="Variant.Outlined" Style="width:100%">
+				<RadzenTextBox Name="Nome"
+							   MaxLength="50"
+							   @bind-Value="@professor.Nome"
+							   onkeypress="return /^[a-zA-ZÀ-ÿ ]+$/.test(event.key)" />
+			</RadzenFormField>
+			<ValidationMessage For="@(() => professor.Nome)" />
+		</div>
+
+		<div class="p-2">
+			<RadzenFormField Text="CPF" Variant="Variant.Outlined" Style="width:100%">
+				<RadzenTextBox Name="Cpf"
+							   MaxLength="14"
+							   @bind-Value="@professor.Cpf"
+							   @oninput="@(e => professor.Cpf = StringUtils.AplicarMascaraCpfInput(e.Value?.ToString()))"
+							   onkeypress="return event.charCode >= 48 && event.charCode <= 57" />
+			</RadzenFormField>
+			<ValidationMessage For="@(() => professor.Cpf)" />
+		</div>
+
+	
+		<div class="p-2">
+			<RadzenFormField Text="Sexo" Variant="Variant.Outlined" Style="width:100%">
+				<RadzenDropDown @bind-Value="professor.Sexo"
+								Data="@opcoesSexo"
+								TextProperty="Descricao"
+								ValueProperty="Codigo"
+								Style="width: 100%;"
+								Name="Sexo" />
+			</RadzenFormField>
+			<ValidationMessage For="@(() => professor.Sexo)" />
+		</div>
+
+		<div class="p-2">
+			<RadzenFormField Text="Telefone" Variant="Variant.Outlined" Style="width:100%">
+				<RadzenTextBox Name="Telefone"
+							   MaxLength="15"
+							   @bind-Value="@professor.Telefone"
+							   @oninput="@(e => professor.Telefone = StringUtils.AplicarMascaraTelefoneInput(e.Value?.ToString()))"
+							   onkeypress="return event.charCode >= 48 && event.charCode <= 57" />
+			</RadzenFormField>
+			<ValidationMessage For="@(() => professor.Telefone)" />
+		</div>
+
+		<div class="p-2">
+			<RadzenFormField Text="Email" Variant="Variant.Outlined" Style="width:100%">
+				<RadzenTextBox Name="Email" MaxLength="100" @bind-Value="@professor.Email" />
+			</RadzenFormField>
+			<ValidationMessage For="@(() => professor.Email)" />
+		</div>
+
+		<div class="p-2">
+			<RadzenFormField Text="Data de Nascimento" Variant="Variant.Outlined" Style="width:100%">
+				<RadzenDatePicker @bind-Value="professor.DataNascimento"
+								  Name="DataNascimento"
+								  DateFormat="dd/MM/yyyy"
+								  AllowTextInput="true"
+								  TValue="DateTime?"
+								  Style="width: 100%;" />
+			</RadzenFormField>
+			<ValidationMessage For="@(() => professor.DataNascimento)" />
+		</div>
+
+        <div class="row p-2">
+            <div class="col-md-4">
+                <RadzenFormField Text="Titulação" Variant="Variant.Outlined" Style="width:100%">
+                    <RadzenDropDown @bind-Value="professor.Titulacao" Data="@opcoesTitulacao" TextProperty="Text" ValueProperty="Value" Style="width: 100%;" />
+                </RadzenFormField>
+            </div>
+            <div class="col-md-4">
+                <RadzenFormField Text="Carga Horária (Semanal)" Variant="Variant.Outlined" Style="width:100%">
+                    <RadzenNumeric TValue="int" @bind-Value="professor.CargaHorariaSemanal" Min="10" Max="40" />
+                </RadzenFormField>
+            </div>
+            <div class="col-md-4">
+                <RadzenFormField Text="Valor Hora" Variant="Variant.Outlined" Style="width:100%">
+                    <RadzenNumeric TValue="decimal" @bind-Value="professor.ValorHora" Format="c" />
+                </RadzenFormField>
+            </div>
+        </div>
+
+        @* Campos de Pessoa (Email, Telefone, Sexo, DataNasc) seguem o mesmo padrão do Aluno *@
+        <div class="p-2">
+            <RadzenButton Text="Salvar" ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Primary" />
+            <RadzenButton Text="Cancelar" Click="@(() => DialogService.Close(false))" ButtonStyle="ButtonStyle.Secondary" />
+        </div>
+    </ChildContent>
+</RadzenTemplateForm>
+
+@code {
+    private RequestCreateProfessorDto professor = new();
+    
+    // Supondo que TitulacaoProfessor seja um Enum
+    List<dynamic> opcoesTitulacao = new List<dynamic>()
+    {
+        new { Value = 0, Text = "Graduado" },
+        new { Value = 1, Text = "Especialista" },
+        new { Value = 2, Text = "Mestre" },
+        new { Value = 3, Text = "Doutor" }
+    };
+
+	List<dynamic> opcoesSexo = new List<dynamic>()
+	{
+		new { Codigo = "M", Descricao = "Masculino" },
+		new { Codigo = "F", Descricao = "Feminino" }
+	};
+
+    private async Task Save(RequestCreateProfessorDto args)
+    {
+        args.Cpf = StringUtils.LimparCpf(args.Cpf);
+        args.Telefone = StringUtils.LimparTelefone(args.Telefone);
+
+        if (await service.Create(args))
+        {
+            NotificationService.Notify(NotificationSeverity.Success, "Sucesso", "Professor cadastrado!");
+            DialogService.Close(true);
+        }
+    }
+}

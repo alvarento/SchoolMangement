@@ -19,8 +19,7 @@ namespace SchoolManagement.Communication.RequestsDto
 		public string Sexo { get; set; } = string.Empty;
 
 		[Required(ErrorMessage = "Telefone é obrigatório")]
-		[Phone(ErrorMessage = "Telefone inválido")]
-		[StringLength(11, MinimumLength = 11, ErrorMessage = "Telefone inválido")]
+		[StringLength(15, MinimumLength = 11, ErrorMessage = "Telefone inválido")]
 		public string Telefone { get; set; } = string.Empty;
 
 		[EmailAddress(ErrorMessage = "Email inválido")]

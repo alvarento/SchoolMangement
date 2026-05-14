@@ -1,0 +1,75 @@
+﻿@rendermode @(new InteractiveServerRenderMode(prerender: false))
+@using SchoolManagement.Communication.ResponsesDto
+@using SchoolManagement.WebApp.Services.ProfessorService
+@using System.Collections.ObjectModel
+@inject IProfessorService service
+@inject DialogService DialogService
+@inject NotificationService NotificationService
+
+<div class="rz-p-4">
+    <div class="header-datagrid rz-display-flex rz-justify-content-between">
+        <p>Gerenciamento de Professores</p>
+        <RadzenButton Click="@NovoProfessor" Text="Novo Professor" Icon="add_circle" ButtonStyle="ButtonStyle.Primary" />
+    </div>
+
+    @if (isLoading)
+    {
+        <RadzenProgressBar Mode="ProgressBarMode.Indeterminate" />
+    }
+    else
+    {
+        <RadzenDataGrid AllowPaging="true" PageSize="10" AllowSorting="true" Data="@professores" TItem="ResponseReadProfessorDto">
+            <Columns>
+                <RadzenDataGridColumn Property="Nome" Title="Nome" Frozen="true" Width="200px" />
+                <RadzenDataGridColumn Property="TitulacaoProfessor" Title="Titulação" Width="120px" />
+                <RadzenDataGridColumn Property="CargaHorariaSemanal" Title="Carga H." Width="100px" TextAlign="TextAlign.Center" />
+                <RadzenDataGridColumn Property="Salario" Title="Salário Estimado" Width="130px" />
+                <RadzenDataGridColumn Property="Email" Title="Email" Width="200px" />
+                
+                <RadzenDataGridColumn Title="Ações" Sortable="false" Filterable="false" Width="100px" TextAlign="TextAlign.Center">
+                    <Template Context="prof">
+                        <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Info" Size="ButtonSize.Small" Click="@(() => Edit(prof))" />
+                        <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.Small" Click="@(() => Delete(prof.Id))" class="rz-ml-2" />
+                    </Template>
+                </RadzenDataGridColumn>
+            </Columns>
+        </RadzenDataGrid>
+    }
+</div>
+
+@code {
+    private ObservableCollection<ResponseReadProfessorDto> professores = new();
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync() => await LoadData();
+
+    private async Task LoadData()
+    {
+        isLoading = true;
+        var response = await service.GetAll();
+        professores = response?.Data != null
+            ? new ObservableCollection<ResponseReadProfessorDto>(response.Data)
+            : new();
+        isLoading = false;
+    }
+
+    public async Task NovoProfessor()
+    {
+        if (await DialogService.OpenAsync<ProfessorCreateForm>("Novo Professor", options: new DialogOptions { Width = "800px" }) == true)
+            await LoadData();
+    }
+
+    private async Task Edit(ResponseReadProfessorDto prof) { /* Segue lógica do AlunoEditForm adaptada */ }
+
+    public async Task Delete(int id)
+    {
+        if (await DialogService.Confirm("Excluir professor?") == true)
+        {
+            if (await service.Delete(id))
+            {
+                await LoadData();
+                NotificationService.Notify(NotificationSeverity.Success, "Removido");
+            }
+        }
+    }
+}

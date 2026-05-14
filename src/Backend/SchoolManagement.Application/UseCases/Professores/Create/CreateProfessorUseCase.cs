@@ -11,12 +11,14 @@ namespace SchoolManagement.Application.UseCases.Professores.Create
 {
 	public class CreateProfessorUseCase(
 		IProfessorRepository professorRepository,
+		IPessoaRepository pessoasRepository,
 		IUnitOfWork unitOfWork,
 		IValidationErrorMessages validationErrorMessages,
 		IMapper<RequestCreateProfessorDto, Professor> mapper
 		) : ICreateProfessorUseCase
 	{
 
+		private readonly IPessoaRepository _pessoaRepository = pessoasRepository;
 		private readonly IProfessorRepository _professorRepository = professorRepository;
 		private readonly IUnitOfWork _unitOfWork = unitOfWork;
 		private readonly IValidationErrorMessages _validationErrorMessages = validationErrorMessages;
@@ -51,8 +53,8 @@ namespace SchoolManagement.Application.UseCases.Professores.Create
 			var result = validator.Validate(request);
 			if (!result.IsValid) _validationErrorMessages.ThrowInvalid(result);
 
-			bool emailExist = await _professorRepository.ExistActiveProfessorWithEmail(request.Email);
-			bool cpfExist = await _professorRepository.ExistActiveProfessorWithCpf(request.Cpf);
+			bool emailExist = await _pessoaRepository.ExistsEmail(request.Email);
+			bool cpfExist = await _pessoaRepository.ExistsCpf(request.Cpf);
 			if (emailExist) _validationErrorMessages.AddError(result, ResourceMessagesException.EMAIL_ALREADY_REGISTERED);
 			if (cpfExist) _validationErrorMessages.AddError(result, ResourceMessagesException.CPF_ALREADY_REGISTERED);
 

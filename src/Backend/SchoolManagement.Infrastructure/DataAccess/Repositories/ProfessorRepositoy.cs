@@ -16,17 +16,13 @@ namespace SchoolManagement.Infrastructure.DataAccess.Repositories
 		public async Task Add(Professor prof) 
 			=> await _dbContext.Professores.AddAsync(prof);
 
-		public async Task<bool> ExistActiveProfessorWithEmail(string email)
-			=> await _dbContext.Professores.AnyAsync(prof => prof.Email == Email.Criar(email));
-
-		public async Task<bool> ExistActiveProfessorWithCpf(string cpf)
-			=> await _dbContext.Professores.AnyAsync(prof => prof.Cpf == Cpf.Criar(cpf));
 
 		public async Task<Professor?> GetProfessorById(int id)
 			=> await _dbContext.Professores.FirstOrDefaultAsync(prof => prof.Id == id);
 
 		public async Task<Professor?> GetProfessorByEmail(string email)
-			=> await _dbContext.Professores.FirstOrDefaultAsync(prof => prof.Email.Equals(Email.Criar(email)));
+			=> await _dbContext.Professores.FirstOrDefaultAsync(prof => prof.Email.Valor.Equals(email));
+
 
 		public void Update(Professor prof)
 			=> _dbContext.Professores.Update(prof);
