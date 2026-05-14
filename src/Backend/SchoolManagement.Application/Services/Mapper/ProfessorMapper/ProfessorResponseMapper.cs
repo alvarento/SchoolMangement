@@ -7,13 +7,20 @@ namespace SchoolManagement.Application.Services.Mapper.ProfessorMapper
 	{
 		public ResponseReadProfessorDto Map(Professor res)
 		{
-			return new ResponseReadProfessorDto {
-				Nome = res.Nome.Valor,
+			return new ResponseReadProfessorDto
+			{
+				Id = res.Id,
+				Nome = res.Nome,
 				Cpf = res.Cpf.Valor,
 				Sexo = res.Sexo,
 				Telefone = res.Telefone.Valor,
-				Email = res.Email.Valor,
+				Email = res.Email,
 				DataNascimento = res.DataNascimento.Valor.ToString("dd/MM/yyyy"),
+				Idade = res.Idade,
+				CargaHorariaSemanal = res.CargaHorariaSemanal,
+				ValorHora = res.ValorHora,
+				Salario = res.Salario,
+				TitulacaoProfessor = res.Titulacao
 			};
 		}
 	}

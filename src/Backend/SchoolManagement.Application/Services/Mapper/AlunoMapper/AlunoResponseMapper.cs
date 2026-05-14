@@ -1,6 +1,5 @@
 ﻿using SchoolManagement.Communication.ResponsesDto;
 using SchoolManagement.Domain.Entities;
-using SchoolManagement.Domain.ValueObjects;
 
 namespace SchoolManagement.Application.Services.Mapper.AlunoMapper
 {
@@ -15,9 +14,9 @@ namespace SchoolManagement.Application.Services.Mapper.AlunoMapper
 				Cpf = res.Cpf.Valor,
 				Sexo = res.Sexo,
 				Telefone = res.Telefone.Valor,
-				Email = res.Email.Valor,
+				Email = res.Email,
 				DataNascimento = res.DataNascimento.Valor.ToString("dd/MM/yyyy"),
-				Idade = Idade.Criar(res.DataNascimento.Valor).Valor,
+				Idade = res.Idade,
 				StatusAluno = res.StatusAluno.ToString()
 			};
 		}

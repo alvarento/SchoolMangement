@@ -21,7 +21,9 @@ namespace SchoolManagement.Domain.ValueObjects
 			return new Idade(idade);
 		}
 
-		public override string ToString() => Valor.ToString();
+        public static implicit operator int(Idade idade) => idade.Valor;
+
+        public override string ToString() => Valor.ToString();
 
 		public int CompareTo(Idade other) => Valor.CompareTo(other.Valor);
 

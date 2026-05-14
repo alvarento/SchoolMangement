@@ -8,12 +8,12 @@ namespace SchoolManagement.Domain.Entities
 	{
 
         public int Id { get; private set; }
-		public Nome Nome { get; set; }
+		public Nome Nome { get; private set; }
 		public Cpf Cpf { get; private set; }
 		public string Sexo { get; private set; }
-		public Idade Idade { get; private set; }
-		public Telefone Telefone { get; set; }
-		public Email Email { get; set; }
+		public Idade Idade => Idade.Criar(DataNascimento.Valor);
+		public Telefone Telefone { get; private set; }
+		public Email Email { get; private set; }
 
 		public DataNascimento DataNascimento { get; private set; }
 
@@ -27,12 +27,11 @@ namespace SchoolManagement.Domain.Entities
 			string email,
 			DateTime dataNascimento)
 			{
-				Nome = Nome.Criar(nome);
-				Cpf = Cpf.Criar(cpf);
+				SetNome(nome);
+				SetCpf(cpf);
+				SetTelefone(fone);
 				SetSexo(sexo);
-				SetIdade(dataNascimento);
-				Telefone = Telefone.Criar(fone);
-				Email = Email.Criar(email);
+				SetEmail(email);
 				SetDataNascimento(dataNascimento);
 		}
 
@@ -45,8 +44,6 @@ namespace SchoolManagement.Domain.Entities
         }
 
 		private void SetDataNascimento(DateTime dataNascimento) => DataNascimento = DataNascimento.Criar(dataNascimento);
-
-		private void SetIdade(DateTime dataNascimento) => Idade = Idade.Criar(dataNascimento);
 
 
 
@@ -65,8 +62,13 @@ namespace SchoolManagement.Domain.Entities
 			if (!string.IsNullOrWhiteSpace(email)) Email = Email.Criar(email);
 		}
 
+        private void SetCpf(string? cpf)
+        {
+            if (!string.IsNullOrWhiteSpace(cpf)) Cpf = Cpf.Criar(cpf);
+        }
 
-	}
+
+    }
 } 
 
 

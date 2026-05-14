@@ -65,10 +65,9 @@ namespace SchoolManagement.API.Controllers
 
 		[HttpGet]
 		[Route("count")]
-		[ProducesResponseType(typeof(ResponseReadProfessorDto), StatusCodes.Status200OK)]
-		[ProducesResponseType(typeof(ResponseErrorDto), StatusCodes.Status404NotFound)]
+		[ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
 		public async Task<IActionResult> GetTotal(
-	[FromServices] IReadTotalProfessoresUseCase useCase
+		[FromServices] IReadTotalProfessoresUseCase useCase
 )
 		{
 			int total = await useCase.Execute();

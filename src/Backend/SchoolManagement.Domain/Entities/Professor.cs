@@ -18,10 +18,10 @@ namespace SchoolManagement.Domain.Entities
 
 
 
-		public int CargaHorariaSemanal { get; set; }
+		public int CargaHorariaSemanal { get; private set; }
 
-		public decimal ValorHora { get; set; }
-		public decimal Salario => CargaHorariaSemanal * 5 * ValorHora;
+		public decimal ValorHora { get; private set; }
+		public decimal Salario => Math.Round(CargaHorariaSemanal * 5 * ValorHora, 2);
 
 		public TitulacaoProfessor Titulacao { get; private set; }
 		public ICollection<Disciplina> Disciplinas { get; private set; } = [];

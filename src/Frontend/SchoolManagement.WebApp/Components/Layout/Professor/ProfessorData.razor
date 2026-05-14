@@ -59,7 +59,22 @@
             await LoadData();
     }
 
-    private async Task Edit(ResponseReadProfessorDto prof) { /* Segue lógica do AlunoEditForm adaptada */ }
+    private async Task Edit(ResponseReadProfessorDto prof)    
+    {
+        var result = await DialogService.OpenAsync<ProfessorEditForm>("Editar Professor",
+    new Dictionary<string, object?> { { "ProfessorExistente", prof } },
+    new DialogOptions { Width = "700px" });
+
+        if (result is ResponseReadProfessorDto atualizado)
+        {
+            var item = professores.FirstOrDefault(a => a.Id == atualizado.Id);
+            if (item != null)
+            {
+                var index = professores.IndexOf(item);
+                professores[index] = atualizado; // Atualização reativa do Grid
+            }
+        }
+    }
 
     public async Task Delete(int id)
     {

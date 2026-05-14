@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SchoolManagement.Infrastructure.DataAcess;
 
@@ -10,9 +11,11 @@ using SchoolManagement.Infrastructure.DataAcess;
 namespace SchoolManagement.Infrastructure.Migrations
 {
     [DbContext(typeof(SchoolManagementDbContext))]
-    partial class SchoolManagementDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260514140611_Fix_Professor_Table")]
+    partial class Fix_Professor_Table
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

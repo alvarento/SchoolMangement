@@ -42,13 +42,11 @@ namespace SchoolManagement.Infrastructure.DataAccess.Repositories
 		public async Task<List<Professor>> GetPagedAsync(int pageNumber, int pageSize)
 		{
 			return await _dbContext.Professores
-				.OrderBy(a => a.Nome)
+				.OrderBy(a => a.Nome.Valor)
 				.Skip((pageNumber - 1) * pageSize)
 				.Take(pageSize)
 				.ToListAsync();
 		}
-
-
 
 	}
 }

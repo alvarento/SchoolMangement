@@ -26,7 +26,9 @@ namespace SchoolManagement.Domain.ValueObjects
             return new Email(email.ToLower().Trim());
 		}
 
-		public override string ToString() => Valor;
+        public static implicit operator string(Email email) => email.Valor;
+
+        public override string ToString() => Valor;
 
 	}
 }

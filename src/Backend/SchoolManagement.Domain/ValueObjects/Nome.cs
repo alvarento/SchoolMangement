@@ -20,6 +20,8 @@ namespace SchoolManagement.Domain.ValueObjects
             return new Nome(nome);
 		}
 
+        public static implicit operator string(Nome nome) => nome.Valor;
+
         public override string ToString() => Valor;
 	}
 }

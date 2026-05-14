@@ -1,11 +1,18 @@
-﻿namespace SchoolManagement.Communication.ResponsesDto
+﻿using System.Text.Json.Serialization;
+using SchoolManagement.Domain.Enums;
+
+namespace SchoolManagement.Communication.ResponsesDto
 {
 	public class ResponseReadProfessorDto : ResponseReadPessoaDto
 	{
-		public string CargaHorariaSemanal { get; set; } = string.Empty;
-		public string TitulacaoProfessor { get; set; } = string.Empty;
+		public int CargaHorariaSemanal { get; set; }
 
-		public string Salario { get; set; } = string.Empty;
+        public decimal ValorHora { get; set; }
+
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        public TitulacaoProfessor TitulacaoProfessor { get; set; }
+
+		public decimal Salario { get; set; }
 
 	}
 }
