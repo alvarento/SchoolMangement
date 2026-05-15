@@ -56,6 +56,7 @@ namespace SchoolManagement.WebApp.Services.LoginService
 		{
 			try
 			{
+				usuarioDto.IsAdmin = true;
 				var response = await _http.PostAsJsonAsync(
 					"/usuarios",
 					usuarioDto);

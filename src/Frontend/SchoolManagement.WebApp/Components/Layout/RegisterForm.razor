@@ -21,18 +21,41 @@
 
         <div class="row">
             <div class="col-6 mb-3">
-                <RadzenLabel Text="Senha" Component="Senha" />
-                <RadzenPassword @bind-Value="novoUsuario.Senha" Name="Senha" Style="width:100%" />
+                <RadzenLabel Text="Senha"/>
+                <RadzenFormField Variant="Variant.Outlined" Style="width: 100%;">
+                    <ChildContent>
+                        @if (isPasswordVisible)
+                        {
+                            <RadzenTextBox Name="Senha" @bind-Value="@novoUsuario.Senha" />
+                        }
+                        else
+                        {
+                            <RadzenPassword Name="Senha" @bind-Value="@novoUsuario.Senha" />
+                        }
+                    </ChildContent>
+                    <End>
+                        <RadzenIcon Icon="@(isPasswordVisible ? "visibility" : "visibility_off")"
+                                    Style="cursor: pointer;"
+                                    @onclick="TogglePasswordVisibility" />
+                    </End>
+                </RadzenFormField>
                 <RadzenRequiredValidator Component="Senha" Text="Senha é obrigatória" />
+                <RadzenLengthValidator Component="Senha" Min="6" Max="10"
+                                       Text="A senha deve ter entre 6 e 10 caracteres" />
+
+                <RadzenRegexValidator Component="Senha" Text="A senha deve conter uma letra maiúscula e um número"
+                                      Pattern="^(?=.*[A-Z])(?=.*\d).+$" />
             </div>
             <div class="col-6 mb-3">
                 <RadzenLabel Text="Confirmar Senha" Component="ConfirmarSenha" />
+                <RadzenFormField Variant="Variant.Outlined" Style="width: 100%;">
                 <RadzenPassword @bind-Value="confirmarSenha" Name="ConfirmarSenha" Style="width:100%" />
+                </RadzenFormField>
                 <RadzenCompareValidator Value="@novoUsuario.Senha" Component="ConfirmarSenha" Text="As senhas não coincidem" />
             </div>
         </div>
 
-        @if (PodeDefinirAdmin) // Lógica para mostrar ou não o checkbox de Admin
+        @if (PodeDefinirAdmin)
         {
             <div class="mb-3 rz-display-flex rz-align-items-center rz-gap-2">
                 <RadzenCheckBox @bind-Value="novoUsuario.IsAdmin" Name="IsAdmin" TValue="bool" />
@@ -40,9 +63,9 @@
             </div>
         }
 
-        <div class="rz-display-flex rz-justify-content-end rz-gap-4 rz-mt-4">
-            <RadzenButton Text="Criar Conta" ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Primary" />
-            <RadzenButton Text="Voltar" Click="@(() => Navigation.NavigateTo("/login"))" ButtonStyle="ButtonStyle.Light" />
+        <div class="rz-display-flex rz-justify-content-center">
+            <RadzenButton class="m-2" Text="Criar Conta" ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Primary" />
+            <RadzenButton class="m-2" Text="Voltar" Click="@(() => Navigation.NavigateTo("/login"))" ButtonStyle="ButtonStyle.Light" />
         </div>
     </div>
 </RadzenTemplateForm>
@@ -66,5 +89,13 @@
         {
             NotificationService.Notify(NotificationSeverity.Error, "Erro", "Não foi possível criar a conta.");
         }
+    }
+
+
+    bool isPasswordVisible = false;
+
+    void TogglePasswordVisibility()
+    {
+        isPasswordVisible = !isPasswordVisible;
     }
 }

@@ -68,6 +68,7 @@ Para acessar endpoints protegidos:
 1.  Crie um usuário via `POST /usuarios`.
 2.  Obtenha o Token via `POST /login`.
 3.  No Swagger, clique em **Authorize** e insira: `Bearer <seu_token>`.
+4.  Gerar CPF válido sem pontuação em: [4devs.com/gerador_de_cpf](https://www.4devs.com.br/gerador_de_cpf)
 
 ---
 
