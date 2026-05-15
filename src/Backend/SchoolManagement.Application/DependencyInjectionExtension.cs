@@ -23,6 +23,7 @@ using SchoolManagement.Application.UseCases.Usuarios.Create;
 using SchoolManagement.Application.UseCases.Login.DoLogin;
 using SchoolManagement.Application.UseCases.Usuarios.Read;
 using SchoolManagement.Application.UseCases.Alunos.ReadTotal;
+using SchoolManagement.Application.UseCases.Professores.ReadTotal;
 
 namespace SchoolManagement.Application
 {
@@ -75,6 +76,7 @@ namespace SchoolManagement.Application
 			services.AddScoped<IUpdateProfessorUseCase, UpdateProfessorUseCase>();
 			services.AddScoped<IDeleteProfessorUseCase, DeleteProfessorUseCase>();
 			services.AddScoped<IReadAllProfessoresUseCase, ReadAllProfessoresUseCase>();
+			services.AddScoped<IReadTotalProfessoresUseCase, ReadTotalProfessoresUseCase>();
 		}
 	}
 }

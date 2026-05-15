@@ -25,7 +25,7 @@ namespace SchoolManagement.WebApp.Services.AuthStateService
         {
             if (_initialized) return;
 
-            // Diferente do LocalStorage, aqui lemos o Cookie que já veio na requisição HTTP
+            
             var token = _httpContextAccessor.HttpContext?.Request.Cookies["authToken"];
 
             if (string.IsNullOrWhiteSpace(token))
@@ -42,16 +42,13 @@ namespace SchoolManagement.WebApp.Services.AuthStateService
 
         public async Task LoginAsync(string token)
         {
-            // 1. Salva o cookie no navegador via JS (precisamos do JS aqui pois o login é uma ação do cliente)
-            await _jsRuntime.InvokeVoidAsync("setCookie", "authToken", token, 60); // Função JS que criamos antes
-
+                        await _jsRuntime.InvokeVoidAsync("setCookie", "authToken", token, 60); 
             SetAsLoggedIn(token);
         }
 
         public async Task LogoutAsync()
         {
-            // 1. Remove o cookie via JS
-            await _jsRuntime.InvokeVoidAsync("setCookie", "authToken", "", -1);
+                        await _jsRuntime.InvokeVoidAsync("setCookie", "authToken", "", -1);
 
             SetAsLoggedOut();
         }
@@ -74,10 +71,7 @@ namespace SchoolManagement.WebApp.Services.AuthStateService
 
 		public Guid? GetUserId()
 		{
-			// Procuramos especificamente pela claim 'sid' que você definiu no backend
-			// O .NET mapeia ClaimTypes.Sid para a string "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/sid"
-			// ou apenas "sid" dependendo do parser.
-			var claim = CurrentUser.FindFirst(ClaimTypes.Sid) ??
+												var claim = CurrentUser.FindFirst(ClaimTypes.Sid) ??
 						CurrentUser.FindFirst("sid");
 
 			if (claim != null && Guid.TryParse(claim.Value, out var guidId))
@@ -88,8 +82,7 @@ namespace SchoolManagement.WebApp.Services.AuthStateService
 			return null;
 		}
 
-		// ... Mantenha os métodos ParseClaimsFromJwt e ParseBase64WithoutPadding como estão ...
-
+		
 		public override Task<AuthenticationState> GetAuthenticationStateAsync() => Task.FromResult(new AuthenticationState(CurrentUser));
         public Task<string?> GetTokenAsync() => Task.FromResult(_tokenProvider.Token);
 
@@ -108,9 +101,7 @@ namespace SchoolManagement.WebApp.Services.AuthStateService
 				var key = kvp.Key;
 				var value = kvp.Value?.ToString() ?? "";
 
-				// DICA: O JwtSecurityTokenHandler do Backend costuma abreviar nomes longos.
-				// Se no JSON vier "sid", mapeamos para o tipo oficial do .NET para facilitar o FindFirst(ClaimTypes.Sid)
-				if (key == "sid")
+												if (key == "sid")
 				{
 					claims.Add(new Claim(ClaimTypes.Sid, value));
 				}

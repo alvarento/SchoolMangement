@@ -1,12 +1,8 @@
-﻿using System.Linq;
-using System.Text.RegularExpressions;
-
-namespace SchoolManagement.WebApp.Utils
+﻿namespace SchoolManagement.WebApp.Utils
 {
 	public static class StringUtils
 	{
-		// --- MÉTODOS PARA O GRID (Exibição estática) ---
-
+		
 		public static string FormatarCpfGrid(string? cpf)
 		{
 			if (string.IsNullOrWhiteSpace(cpf)) return "";
@@ -26,8 +22,7 @@ namespace SchoolManagement.WebApp.Utils
 				: long.Parse(apenasNumeros).ToString(@"(00) 0000\-0000");
 		}
 
-		// --- MÉTODOS PARA O INPUT (Máscara Dinâmica) ---
-
+		
 		public static string AplicarMascaraCpfInput(string? valor)
 		{
 			var numeros = SomenteNumeros(valor);
@@ -53,8 +48,7 @@ namespace SchoolManagement.WebApp.Utils
 
 		public static string LimparTelefone(string? tel) => SomenteNumeros(tel);
 
-		// --- MÉTODO AUXILIAR ---
-		public static string SomenteNumeros(string? valor)
+				public static string SomenteNumeros(string? valor)
 		{
 			if (string.IsNullOrWhiteSpace(valor)) return "";
 			return new string(valor.Where(char.IsDigit).ToArray());

@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using SchoolManagement.Domain.Interfaces.Repositories;
 
 namespace SchoolManagement.Application.UseCases.Professores.ReadTotal

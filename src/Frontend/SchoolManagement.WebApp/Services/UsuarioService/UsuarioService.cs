@@ -16,8 +16,7 @@ namespace SchoolManagement.WebApp.Services.UsuarioService
 				return await response.Content.ReadFromJsonAsync<ResponseReadUsuarioDto>();
 			}
 
-			// Se for 401 (Unauthorized) ou 403 (Forbidden), o token expirou ou é inválido
-			return null;
+						return null;
 		}
 	}
 }

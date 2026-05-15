@@ -15,24 +15,15 @@ var builder = WebApplication.CreateBuilder(args);
 
 Uri baseUrl = new Uri(builder.Configuration["ApiConfig:BaseUrl"] ?? "https://localhost:5001");
 
-// Add services to the container.
 builder.Services.AddRazorComponents()
 	.AddInteractiveServerComponents(options => options.DetailedErrors = true);
 
 builder.Services.AddRadzenComponents();
 
-//builder.Services.AddAuthentication();
-//builder.Services.AddAuthentication(options =>
-//{
-//	options.DefaultScheme = "Manual";
-//	options.DefaultChallengeScheme = "Manual";
-//});
-//.AddCookie("Manual");
 builder.Services.AddAuthentication("Manual")
 	.AddCookie("Manual", options =>
 	{
-		// Isso impede que o ASP.NET tente redirecionar via Servidor
-		options.LoginPath = "/login";
+				options.LoginPath = "/login";
 		options.Events.OnRedirectToLogin = context =>
 		{
 			context.Response.StatusCode = StatusCodes.Status401Unauthorized;
@@ -40,11 +31,6 @@ builder.Services.AddAuthentication("Manual")
 		};
 	});
 
-//builder.Services.AddAuthentication("Cookies")
-//	.AddCookie("Cookies", options =>
-//	{
-//		options.LoginPath = "/login";
-//	});
 
 
 builder.Services.AddAuthorizationCore();
@@ -80,12 +66,10 @@ PrintLauchConsole(builder.Configuration);
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
 	app.UseExceptionHandler("/Error", createScopeForErrors: true);
-	// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-	app.UseHsts();
+		app.UseHsts();
 }
 app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
 app.UseHttpsRedirection();

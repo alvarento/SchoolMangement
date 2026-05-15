@@ -17,8 +17,7 @@ namespace SchoolManagement.WebApp.Services.AlunoService
 				return await response.Content.ReadFromJsonAsync<PagedResponse<ResponseReadAlunoDto>>();
 			}
 
-			// Se for 401 (Unauthorized) ou 403 (Forbidden), o token expirou ou é inválido
-			return null;
+						return null;
 		}
 
 		public async Task<int?> GetTotal()
@@ -30,8 +29,7 @@ namespace SchoolManagement.WebApp.Services.AlunoService
 				return await response.Content.ReadFromJsonAsync<int?>();
 			}
 
-			// Se for 401 (Unauthorized) ou 403 (Forbidden), o token expirou ou é inválido
-			return null;
+						return null;
 		}
 
 		public async Task<bool> Delete(int id)

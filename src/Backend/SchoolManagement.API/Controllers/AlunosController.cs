@@ -1,12 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using SchoolManagement.API.Attributes;
 using SchoolManagement.Application.UseCases.Alunos.Create;
 using SchoolManagement.Application.UseCases.Alunos.Delete;
 using SchoolManagement.Application.UseCases.Alunos.Read;
 using SchoolManagement.Application.UseCases.Alunos.ReadAll;
-using SchoolManagement.Application.UseCases.Alunos.Update;
 using SchoolManagement.Application.UseCases.Alunos.ReadTotal;
+using SchoolManagement.Application.UseCases.Alunos.Update;
 using SchoolManagement.Communication.RequestsDto;
 using SchoolManagement.Communication.ResponsesDto;
 
@@ -66,7 +65,8 @@ namespace SchoolManagement.API.Controllers
 
 		[HttpGet]
 		[Route("count")]
-		public async Task<IActionResult> GetTotalAlunos(
+        [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetTotal(
 			[FromServices] IReadTotalAlunosUseCase useCase
 		)
 		{
